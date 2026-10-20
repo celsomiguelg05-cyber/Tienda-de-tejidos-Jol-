@@ -1,0 +1,809 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Jolé · Trajes típicos de Guatemala</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: tienda de una sola página (inicio, catálogo, ficha con visor 3D, carrito lateral, checkout por pasos). Papel crema, magenta de marca, cursiva editorial para títulos. */
+@font-face{font-family:"Jost";src:url("Jost.ttf") format("truetype");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url("CormorantGaramond-Italic.ttf") format("truetype");font-weight:300 700;font-style:italic;font-display:swap}
+:root{
+  --papel:#F2EBE3; --crema:#FAF6F0; --blanco:#FFFDF9; --tinta:#2E1A24; --suave:#6B5560; --linea:#E3D7CB;
+  --magenta:#A82A68; --magenta-osc:#8E2460; --ciruela:#5E1E43; --rosa:#F4BDD0; --oro:#C38A80; --ok:#3E7A55; --error:#B5302F;
+  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --texto:"Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --r:4px; color-scheme:light;
+}
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--texto);font-size:16px;line-height:1.55}
+img{max-width:100%;display:block}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--magenta);outline-offset:2px}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ancho{max-width:1240px;margin-inline:auto}
+.eti{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--suave)}
+h1,h2,h3{font-family:var(--display);font-style:italic;font-weight:500;color:var(--ciruela);margin:0;text-wrap:balance;line-height:1.05}
+.precio{font-variant-numeric:tabular-nums;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:var(--r);background:var(--magenta);color:var(--crema);
+  font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:15px 24px;text-decoration:none;min-height:48px}
+.btn:hover{background:var(--magenta-osc)}
+.btn.sec{background:transparent;color:var(--ciruela);box-shadow:inset 0 0 0 1px var(--ciruela)}
+.btn.sec:hover{background:var(--ciruela);color:var(--crema)}
+.btn.ancho-completo{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.demo-banda{background:var(--ciruela);color:var(--crema);font-size:12px;letter-spacing:.08em;text-align:center;padding-block:7px}
+.demo-banda b{color:var(--rosa);font-weight:500}
+
+/* encabezado */
+header.sitio{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--papel) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:41;background:var(--papel)}
+.barra{display:flex;align-items:center;gap:20px;min-height:68px}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none}
+.marca img{width:40px;height:40px}
+.marca svg{height:30px;width:auto;color:var(--magenta)}
+nav.principal{display:flex;gap:22px;margin-left:12px}
+nav.principal a{font-size:13px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ciruela)}
+nav.principal a:hover,nav.principal a[aria-current="page"]{color:var(--magenta)}
+.acciones{margin-left:auto;display:flex;align-items:center;gap:10px}
+.moneda{border:1px solid var(--linea);border-radius:99px;display:flex;overflow:hidden}
+.moneda button{border:0;background:transparent;font-size:12px;letter-spacing:.1em;padding:6px 10px;color:var(--ciruela)}
+.moneda button[aria-pressed="true"]{background:var(--ciruela);color:var(--crema)}
+.icono-btn{position:relative;border:0;background:transparent;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--ciruela)}
+.icono-btn:hover{background:var(--linea)}
+.icono-btn svg{width:22px;height:22px}
+.burbuja{position:absolute;top:4px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--magenta);color:#fff;font-size:12px;display:grid;place-items:center;padding:0 4px}
+@media (max-width:820px){nav.principal{display:none}.marca svg{display:none}}
+
+/* vistas */
+[hidden]{display:none!important}
+.campos > .completo{grid-column:1/-1}
+body.en-checkout nav.principal{visibility:hidden}
+.vista{display:none}
+.vista.activa{display:block}
+
+/* inicio */
+.hero{position:relative;height:calc(100svh - 68px - 30px);min-height:560px;overflow:hidden;background:var(--papel)}
+.hero video{position:absolute;left:50%;bottom:0;transform:translateX(-50%);height:min(58svh,44vw);width:auto;aspect-ratio:1152/860;max-width:none;
+  -webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 86%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 86%,transparent 100%)}
+.hero .sello{position:absolute;left:max(18px,env(safe-area-inset-left,0px));top:18px;width:clamp(110px,12vw,190px);transform:rotate(-5deg);filter:drop-shadow(0 6px 10px rgba(60,30,40,.28));z-index:3}
+.hero .nombre{position:absolute;left:50%;top:clamp(24px,5svh,56px);transform:translateX(-50%);width:min(52vw,52svh*1.9,820px);text-align:center;z-index:2;color:var(--magenta)}
+.hero .nombre svg{width:100%;height:auto}
+.hero .lema{margin-top:6px;font-size:clamp(12px,1.1vw,15px);font-weight:500;letter-spacing:.34em;color:var(--ciruela)}
+.hero .cta{position:absolute;right:max(24px,env(safe-area-inset-right,0px));bottom:32px;z-index:3;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.hero .pausa{position:absolute;left:max(18px,env(safe-area-inset-left,0px));bottom:24px;z-index:3;width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:var(--crema);color:var(--ciruela)}
+@media (max-width:640px){.hero{height:auto;min-height:0;display:flex;flex-direction:column;align-items:center;padding-block:14px 16px}.hero .sello{order:1;position:relative;left:auto;top:auto;align-self:flex-start;width:72px;margin-left:max(4px,env(safe-area-inset-left,0px))}.hero .nombre{order:2;position:relative;left:auto;top:auto;transform:none;width:80vw;margin-top:16px}.hero video{order:3;position:relative;left:auto;bottom:auto;transform:none;width:min(112vw,560px);height:auto;margin-top:6px}.hero .pausa{left:auto;right:max(16px,env(safe-area-inset-right,0px));bottom:84px}.hero .cta{order:4;position:relative;right:auto;bottom:auto;align-self:stretch;align-items:stretch;margin-inline:16px;margin-top:8px}.hero .cta .btn.sec{display:none}}
+
+.franja-confianza{background:var(--crema);border-block:1px solid var(--linea)}
+.franja-confianza ul{list-style:none;margin:0;padding-block:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.franja-confianza li{display:flex;gap:12px;align-items:center;font-size:14px;min-width:0}
+.franja-confianza svg{width:28px;height:28px;flex:none;color:var(--magenta)}
+@media (max-width:820px){.franja-confianza ul{grid-template-columns:1fr 1fr}}
+
+.seccion{padding-block:clamp(56px,8vw,96px)}
+.cab-seccion{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.cab-seccion h2{font-size:clamp(34px,4.4vw,54px)}
+.cab-seccion p{margin:6px 0 0;color:var(--suave);max-width:56ch}
+.regiones{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.region{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/4;text-decoration:none;color:var(--crema);background:var(--ciruela)}
+.region img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.region:hover img{transform:scale(1.04)}
+.region span{position:absolute;inset:auto 0 0;padding:40px 14px 14px;background:linear-gradient(transparent,rgba(46,26,36,.9) 55%);font-family:var(--display);font-style:italic;font-size:26px}
+.region small{display:block;font-family:var(--texto);font-style:normal;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+@media (max-width:900px){.regiones{grid-template-columns:repeat(2,1fr)}}
+
+.historia-bloque{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);align-items:center}
+.historia-bloque img{border-radius:var(--r)}
+.historia-bloque p{color:var(--suave);max-width:52ch}
+@media (max-width:820px){.historia-bloque{grid-template-columns:1fr}}
+
+/* tarjetas de producto */
+.rejilla{display:grid;grid-template-columns:repeat(4,1fr);gap:28px 18px}
+@media (max-width:1000px){.rejilla{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:640px){.rejilla{grid-template-columns:repeat(2,1fr);gap:22px 12px}}
+.tarjeta{display:flex;flex-direction:column;gap:8px;text-decoration:none;min-width:0}
+.tarjeta .foto{position:relative;aspect-ratio:600/745;border-radius:var(--r);overflow:hidden;background:var(--crema)}
+.tarjeta .foto img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.tarjeta:hover .foto img{transform:scale(1.03)}
+.chip{position:absolute;left:10px;top:10px;background:var(--crema);color:var(--ciruela);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:2px}
+.chip.unica{background:var(--ciruela);color:var(--crema)}
+.chip-3d{position:absolute;right:10px;top:10px;background:rgba(255,253,249,.92);color:var(--magenta);font-size:12px;font-weight:600;letter-spacing:.1em;padding:4px 7px;border-radius:2px}
+.tarjeta h3{font-family:var(--texto);font-style:normal;font-weight:400;font-size:15px;color:var(--tinta);line-height:1.3}
+.tarjeta .meta{font-size:12px;color:var(--suave);letter-spacing:.04em}
+
+/* catálogo */
+.catalogo{display:grid;grid-template-columns:240px 1fr;gap:36px;align-items:start}
+.filtros{position:sticky;top:96px;display:flex;flex-direction:column;gap:22px}
+.filtros fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.filtros legend{margin-bottom:8px}
+.filtros label{display:flex;align-items:center;gap:10px;font-size:15px;cursor:pointer}
+.filtros input[type=checkbox]{width:18px;height:18px;accent-color:var(--magenta)}
+.filtros .cuenta{margin-left:auto;font-size:12px;color:var(--suave);font-variant-numeric:tabular-nums}
+.barra-cat{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.barra-cat select{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--linea);border-radius:var(--r);background:var(--blanco);color:var(--tinta)}
+.activos{display:flex;gap:8px;flex-wrap:wrap}
+.activos button{border:1px solid var(--ciruela);background:transparent;color:var(--ciruela);border-radius:99px;font-size:13px;padding:5px 12px}
+.ver-filtros{display:none}
+@media (max-width:900px){
+  .catalogo{grid-template-columns:1fr}
+  .filtros{position:fixed;inset:0;z-index:60;background:var(--crema);padding:24px max(16px,env(safe-area-inset-right,0px)) 100px max(16px,env(safe-area-inset-left,0px));overflow:auto;display:none}
+  .filtros.abierto{display:flex}
+  .ver-filtros{display:inline-flex}
+  .filtros .cerrar-filtros{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+}
+.cerrar-filtros{display:none}
+@media (max-width:900px){.cerrar-filtros{display:inline-flex}}
+.vacio{padding:60px 0;text-align:center;color:var(--suave)}
+
+/* ficha */
+.migas{font-size:13px;color:var(--suave);padding-block:18px}
+.migas a{text-decoration:none}
+.ficha{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(24px,4vw,56px);align-items:start;padding-bottom:64px}
+@media (max-width:900px){.ficha{grid-template-columns:1fr}}
+.visor{position:sticky;top:90px}
+@media (max-width:900px){.visor{position:static}}
+.modo{display:flex;gap:6px;margin-bottom:10px}
+.modo button{border:1px solid var(--linea);background:var(--blanco);color:var(--ciruela);border-radius:99px;font-size:13px;letter-spacing:.06em;padding:8px 14px}
+.modo button[aria-pressed="true"]{background:var(--ciruela);color:var(--crema);border-color:var(--ciruela)}
+.lienzo{position:relative;aspect-ratio:4/5;border-radius:var(--r);overflow:hidden;background:radial-gradient(ellipse at 50% 40%,var(--blanco),var(--crema) 70%,#EDE3D8)}
+.lienzo img.principal{width:100%;height:100%;object-fit:cover}
+.lienzo canvas{width:100%!important;height:100%!important;display:block;cursor:grab;touch-action:none}
+.lienzo canvas:active{cursor:grabbing}
+.ayuda-3d{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(46,26,36,.78);color:var(--crema);font-size:12px;letter-spacing:.06em;padding:7px 12px;border-radius:99px;pointer-events:none;transition:opacity .6s;white-space:nowrap}
+.cargando-3d{position:absolute;inset:0;display:grid;place-items:center;color:var(--suave);font-size:14px}
+.miniaturas{display:flex;gap:8px;margin-top:10px}
+.miniaturas button{border:1px solid var(--linea);padding:0;background:none;width:64px;aspect-ratio:600/745;border-radius:3px;overflow:hidden}
+.miniaturas button[aria-pressed="true"]{border-color:var(--magenta);box-shadow:0 0 0 1px var(--magenta)}
+.miniaturas img{width:100%;height:100%;object-fit:cover}
+.info h1{font-size:clamp(36px,4vw,52px);margin:6px 0 10px}
+.info .precio-grande{font-size:24px;color:var(--tinta)}
+.info .aprox{font-size:13px;color:var(--suave);margin-left:8px}
+.bloque{border-top:1px solid var(--linea);padding-block:18px}
+.tallas{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tallas button{min-width:64px;min-height:48px;border:1px solid var(--linea);background:var(--blanco);border-radius:var(--r);font-size:15px;color:var(--tinta);padding:6px 12px;display:flex;flex-direction:column;align-items:center;line-height:1.2}
+.tallas button small{font-size:12px;color:var(--suave)}
+.tallas button[aria-pressed="true"]{border-color:var(--ciruela);box-shadow:inset 0 0 0 1px var(--ciruela)}
+.tallas button[disabled]{text-decoration:line-through;opacity:.45}
+.link{background:none;border:0;color:var(--magenta);text-decoration:underline;text-underline-offset:3px;padding:0;font-size:14px}
+.error-campo{color:var(--error);font-size:13px;margin-top:2px;min-height:18px}
+.error-campo[hidden]{display:block!important;visibility:hidden}
+.lista-check{list-style:none;padding:0;margin:0;display:grid;gap:8px;font-size:14px}
+.lista-check li{display:flex;gap:10px}
+.lista-check svg{width:18px;height:18px;color:var(--ok);flex:none;margin-top:2px}
+details{border-top:1px solid var(--linea)}
+details summary{list-style:none;cursor:pointer;padding:16px 0;display:flex;justify-content:space-between;font-weight:500}
+details summary::after{content:"+";font-size:20px;color:var(--suave)}
+details[open] summary::after{content:"−"}
+details > div{padding-bottom:16px;color:var(--suave);font-size:15px}
+table.medidas{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+table.medidas th,table.medidas td{border-bottom:1px solid var(--linea);padding:8px;text-align:left}
+.tejedora{display:flex;gap:14px;align-items:center;background:var(--crema);border-radius:var(--r);padding:14px;font-size:14px;color:var(--suave)}
+.tejedora .avatar{width:48px;height:48px;border-radius:50%;background:var(--rosa);display:grid;place-items:center;color:var(--ciruela);font-family:var(--display);font-style:italic;font-size:24px;flex:none}
+.ph{color:var(--magenta);font-weight:500}
+
+/* carrito lateral */
+.velo{position:fixed;inset:0;background:rgba(46,26,36,.42);z-index:70;opacity:0;pointer-events:none;transition:opacity .3s}
+.velo.abierto{opacity:1;pointer-events:auto}
+.cajon{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--blanco);z-index:71;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.cajon.abierto{transform:none}
+.cajon header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--linea)}
+.cajon h2{font-size:30px}
+.cajon .cuerpo{flex:1;overflow:auto;padding:12px 20px}
+.cajon footer{border-top:1px solid var(--linea);padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.linea-carrito{display:grid;grid-template-columns:72px 1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--linea);align-items:start}
+.linea-carrito img{width:72px;aspect-ratio:600/745;object-fit:cover;border-radius:3px}
+.linea-carrito h4{margin:0;font-weight:400;font-size:15px}
+.cantidad{display:inline-flex;align-items:center;border:1px solid var(--linea);border-radius:var(--r);margin-top:6px}
+.cantidad button{border:0;background:none;width:34px;height:34px;color:var(--ciruela)}
+.cantidad span{min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
+.quitar{background:none;border:0;color:var(--suave);font-size:13px;text-decoration:underline;padding:0;margin-top:6px}
+.fila-total{display:flex;justify-content:space-between;font-size:15px}
+.fila-total.grande{font-size:18px;font-weight:500}
+.progreso-envio{font-size:13px;color:var(--suave)}
+.progreso-envio .barra-p{height:4px;background:var(--linea);border-radius:2px;margin-top:6px;overflow:hidden}
+.progreso-envio .barra-p i{display:block;height:100%;background:var(--magenta)}
+.pagos{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.pagos span{border:1px solid var(--linea);border-radius:3px;font-size:12px;letter-spacing:.06em;padding:3px 7px;color:var(--suave)}
+
+/* checkout */
+.checkout{display:grid;grid-template-columns:1fr 380px;gap:clamp(24px,4vw,56px);align-items:start;padding-block:28px 72px}
+@media (max-width:900px){.checkout{grid-template-columns:1fr}.resumen{position:static}}
+.pasos{list-style:none;padding:0;margin:0 0 26px;display:flex;gap:6px;counter-reset:p}
+.pasos li{flex:1;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);border-top:3px solid var(--linea);padding-top:8px}
+.pasos li.hecho{border-color:var(--ciruela);color:var(--ciruela)}
+.pasos li.actual{border-color:var(--magenta);color:var(--magenta);font-weight:600}
+.pasos li button{background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;text-decoration:underline;text-underline-offset:3px}
+.pasos .n{white-space:nowrap}
+@media (max-width:560px){.pasos li{letter-spacing:.06em}.pasos li:not(.actual) .t{display:none}.pasos li.actual{flex:2.4}}
+.paso h2{font-size:clamp(30px,3.4vw,40px);margin-bottom:16px}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.campo{display:flex;flex-direction:column;gap:6px;min-width:0}
+.campo.completo{grid-column:1/-1}
+.campo label{font-size:14px;font-weight:500}
+.campo label small{font-weight:400;color:var(--suave)}
+.campo input,.campo select,.campo textarea{font:inherit;font-size:16px;padding:12px 13px;border:1px solid #CDBFB2;border-radius:var(--r);background:var(--blanco);color:var(--tinta);min-height:48px;width:100%}
+.campo input[aria-invalid="true"]{border-color:var(--error)}
+@media (max-width:560px){.campos{grid-template-columns:1fr}}
+.opciones{display:grid;gap:10px}
+.opcion{display:flex;gap:12px;align-items:flex-start;border:1px solid #CDBFB2;border-radius:var(--r);padding:14px;background:var(--blanco);cursor:pointer}
+.opcion:has(input:checked){border-color:var(--ciruela);box-shadow:inset 0 0 0 1px var(--ciruela)}
+.opcion input{width:20px;height:20px;accent-color:var(--magenta);margin-top:2px}
+.opcion .t{flex:1}
+.opcion .t b{font-weight:500}
+.opcion .t small{display:block;color:var(--suave);font-size:13px}
+.invitado{background:var(--crema);border-radius:var(--r);padding:16px;margin-bottom:18px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;font-size:14px}
+.nav-paso{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;flex-wrap:wrap}
+.resumen{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--r);padding:20px;position:sticky;top:90px}
+.resumen h3{font-size:26px;margin-bottom:8px}
+.resumen .lineas{max-height:320px;overflow:auto}
+.resumen .mini{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:8px 0;font-size:14px}
+.resumen .mini img{width:52px;aspect-ratio:600/745;object-fit:cover;border-radius:3px}
+.resumen .sep{border-top:1px solid var(--linea);margin:12px 0;padding-top:12px;display:grid;gap:6px}
+.revision dl{display:grid;grid-template-columns:140px 1fr auto;gap:10px 14px;margin:0;font-size:15px}
+.revision dt{color:var(--suave)}
+.revision dd{margin:0}
+.aviso-demo{border:1px dashed var(--magenta);border-radius:var(--r);padding:14px;font-size:14px;color:var(--ciruela);background:color-mix(in srgb,var(--rosa) 22%,var(--blanco))}
+.confirmacion{text-align:center;padding-block:72px;max-width:640px;margin:auto}
+.confirmacion h1{font-size:clamp(40px,5vw,60px);margin:14px 0}
+.confirmacion .sello-c{width:120px;margin:auto;transform:rotate(-5deg)}
+
+footer.pie{background:var(--ciruela);color:var(--crema);padding-block:48px 28px;position:relative}
+footer.pie::before{content:"";position:absolute;inset:0 0 auto;height:12px;background:url("img/13-tira-tejido.svg") left center/auto 100% repeat-x}
+footer.pie .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px}
+footer.pie h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rosa);margin:0 0 10px;font-weight:500}
+footer.pie a{display:block;color:var(--crema);text-decoration:none;font-size:14px;padding:3px 0;opacity:.88}
+footer.pie p{font-size:14px;opacity:.85;max-width:40ch}
+@media (max-width:820px){footer.pie .cols{grid-template-columns:1fr 1fr}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--tinta);color:var(--crema);padding:12px 18px;border-radius:var(--r);font-size:14px;opacity:0;transition:.3s;z-index:90;pointer-events:none}
+.toast.ver{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="demo-banda gutter"><b>Tienda de demostración.</b> Productos, precios y regiones son ejemplos; no se procesa ningún pago.</div>
+
+<header class="sitio gutter">
+  <div class="barra ancho">
+    <a class="marca" href="#inicio" aria-label="Jolé, inicio">
+      <img src="img/12-icono-sello.svg" alt="">
+      <svg viewBox="0 0 4000 1815" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M373.5,1806.9C299.2,1801.2 222.9,1775.4 164.0,1736.0C127.0,1711.2 94.0,1678.2 70.7,1642.8C20.5,1566.4 -1.2,1460.7 12.1,1357.0C24.8,1257.1 67.7,1165.7 139.6,1085.4C207.6,1009.5 299.2,955.9 401.5,932.1C410.9,930.0 420.0,927.9 421.9,927.5C425.1,926.8 424.9,927.2 414.8,938.6C366.4,993.4 339.3,1047.3 332.9,1101.5C331.2,1115.5 332.3,1142.7 335.0,1155.5C337.7,1168.3 343.6,1186.1 348.9,1197.1C364.7,1230.3 394.7,1257.3 428.0,1268.1C448.4,1274.7 454.1,1275.5 481.0,1275.5C508.2,1275.5 516.8,1274.3 542.0,1267.5C636.9,1241.9 734.6,1167.4 838.1,1042.0C885.8,984.2 926.5,928.1 1009.5,806.0C1070.5,716.2 1104.8,668.7 1154.4,605.0C1242.2,492.2 1326.8,400.4 1422.0,314.6C1494.3,249.4 1554.9,201.1 1631.2,148.0C1645.9,137.8 1657.7,129.4 1657.5,129.2C1657.0,128.7 1521.8,157.5 1480.0,167.0C1333.9,200.4 1234.2,233.6 1146.0,278.1C1054.5,324.2 992.8,373.2 939.6,441.6C891.6,503.3 857.5,576.6 847.0,641.0C845.9,647.9 845.0,654.9 845.0,656.5C845.0,663.1 846.1,663.4 803.5,645.1C789.3,638.9 762.5,625.2 748.5,616.7C670.6,570.0 630.1,511.2 616.0,424.7C613.0,406.1 612.0,393.5 611.9,372.0C611.9,349.6 612.9,338.4 617.0,318.0C637.2,217.2 715.5,134.3 835.1,87.3C902.4,60.8 969.0,46.3 1046.5,41.4C1073.5,39.7 1138.0,39.5 1166.1,41.0C1210.0,43.4 1255.7,47.4 1331.5,55.5C1461.9,69.5 1493.7,71.8 1566.0,72.7C1604.5,73.1 1620.2,72.9 1642.0,71.6C1725.2,66.6 1797.4,55.8 1879.4,36.0C1890.3,33.4 1896.7,32.3 1897.3,32.9C1898.0,33.6 1889.1,40.0 1872.4,50.9C1818.3,86.3 1780.0,117.4 1730.6,166.0C1638.7,256.5 1542.3,372.5 1450.5,503.0C1359.3,632.6 1268.2,789.5 1198.0,937.4C1173.6,988.9 1162.3,1014.4 1131.5,1088.5C1103.4,1155.9 1091.6,1183.0 1069.7,1230.1C938.5,1511.8 790.7,1684.1 612.5,1762.8C582.5,1776.1 557.7,1784.7 524.5,1793.4C496.9,1800.6 472.2,1804.9 445.6,1807.0C430.7,1808.2 389.5,1808.1 373.5,1806.9ZM1445.0,1797.0C1387.5,1792.4 1337.4,1777.8 1294.3,1752.9C1232.8,1717.6 1185.3,1662.4 1161.7,1599.0C1140.2,1541.1 1129.7,1485.8 1128.3,1423.5C1126.8,1356.6 1136.7,1294.1 1159.7,1223.5C1183.6,1150.3 1213.8,1091.4 1256.9,1034.2C1283.0,999.5 1317.3,964.8 1349.5,940.5C1398.6,903.5 1457.1,876.0 1525.2,858.0L1540.0,854.1L1540.0,856.8C1540.0,861.4 1542.8,878.5 1545.6,890.8C1549.3,907.5 1556.0,929.9 1563.6,951.7C1567.2,962.0 1570.4,971.4 1570.7,972.6C1571.1,974.3 1570.3,975.1 1565.8,977.0C1494.1,1007.6 1433.8,1124.3 1420.9,1257.5C1419.3,1274.1 1419.3,1314.5 1420.9,1327.5C1423.8,1350.8 1428.7,1370.2 1436.4,1388.3C1461.7,1447.3 1508.4,1488.0 1566.5,1501.6C1577.8,1504.3 1579.8,1504.4 1602.0,1504.4C1624.3,1504.5 1626.1,1504.3 1637.4,1501.6C1685.1,1490.4 1732.9,1464.9 1779.5,1426.1C1792.0,1415.7 1819.8,1388.2 1834.8,1371.5C1875.5,1326.0 1915.6,1268.4 1960.7,1190.6C1968.0,1177.9 1974.0,1167.3 1974.0,1166.8C1974.0,1166.4 1969.4,1166.0 1963.8,1166.0C1953.6,1166.0 1927.2,1163.3 1909.0,1160.5C1858.6,1152.5 1812.7,1138.5 1771.5,1118.6C1728.3,1097.6 1698.3,1077.1 1668.1,1047.6C1610.3,991.0 1577.7,927.0 1568.4,851.9C1566.3,835.3 1566.0,797.1 1567.9,781.5C1575.9,712.5 1601.5,650.3 1643.6,597.5C1655.0,583.3 1681.7,556.5 1694.5,546.4C1740.4,510.2 1786.1,489.8 1840.0,481.3C1849.2,479.9 1857.4,479.5 1881.0,479.5C1913.2,479.6 1921.0,480.4 1947.8,487.0C2027.0,506.4 2090.6,560.0 2127.7,638.9C2178.1,745.7 2181.9,874.6 2139.5,1038.5C2136.5,1050.0 2132.7,1064.2 2131.0,1070.0C2129.4,1075.8 2128.0,1080.8 2128.0,1081.2C2128.0,1082.2 2139.0,1078.9 2152.9,1073.6C2167.1,1068.3 2184.4,1060.4 2208.0,1048.4L2224.5,1040.1L2229.9,1026.8C2247.1,984.3 2294.5,889.1 2330.5,824.5C2456.4,598.5 2602.9,394.2 2780.9,196.1C2810.9,162.7 2896.1,76.5 2909.2,66.2C2917.9,59.4 2923.9,56.4 2939.0,51.0C2993.7,31.5 3081.5,16.8 3180.5,10.6C3228.4,7.6 3242.9,7.6 3299.0,11.1C3326.4,12.7 3325.4,11.6 3310.3,24.0C3233.0,87.3 3159.3,158.7 3074.9,252.1C2949.7,390.5 2791.4,596.0 2676.4,769.5C2594.8,892.6 2536.3,995.2 2496.7,1085.0C2466.8,1152.8 2448.8,1211.7 2444.0,1258.1C2442.5,1272.9 2442.7,1300.7 2444.4,1312.0C2450.4,1351.2 2468.6,1377.1 2500.4,1392.1C2514.4,1398.6 2526.1,1401.2 2544.0,1401.8C2566.2,1402.4 2582.3,1398.9 2601.1,1389.4C2610.1,1384.9 2627.0,1373.4 2635.5,1366.1C2639.3,1362.8 2642.7,1360.1 2643.0,1360.0C2643.3,1360.0 2643.4,1369.3 2643.2,1380.7C2641.9,1467.0 2656.3,1537.8 2685.6,1589.2C2689.1,1595.4 2691.9,1600.9 2691.6,1601.5C2691.4,1602.0 2688.2,1606.3 2684.4,1611.0C2625.2,1684.8 2545.0,1742.7 2464.1,1770.1C2434.1,1780.3 2409.7,1785.5 2379.1,1788.4C2283.8,1797.5 2203.2,1761.2 2158.7,1689.2C2133.4,1648.4 2117.6,1596.1 2112.4,1536.3C2110.4,1513.4 2110.9,1457.2 2113.4,1433.8C2122.3,1348.0 2142.2,1265.4 2181.5,1151.5C2186.6,1136.7 2191.2,1123.6 2191.6,1122.6C2192.2,1121.1 2192.0,1120.8 2190.9,1121.3C2190.1,1121.6 2182.8,1124.9 2174.5,1128.5C2156.6,1136.4 2139.9,1142.6 2119.5,1149.0L2104.6,1153.7L2099.7,1165.6C2012.7,1377.8 1928.0,1519.5 1826.5,1622.9C1762.9,1687.7 1701.7,1731.0 1627.3,1763.9C1589.7,1780.6 1549.9,1791.2 1509.5,1795.4C1491.7,1797.3 1458.6,1798.1 1445.0,1797.0ZM3011.5,1795.9C2940.2,1789.8 2873.7,1762.9 2811.8,1715.1C2800.1,1706.0 2772.2,1677.6 2761.6,1664.0C2710.1,1597.8 2681.2,1516.1 2674.9,1419.1C2673.4,1395.7 2674.2,1341.3 2676.4,1319.5C2690.1,1183.9 2739.5,1048.1 2824.3,913.0C2888.1,811.3 2964.5,725.2 3055.5,652.5C3156.7,571.7 3264.0,519.3 3373.0,497.6C3403.7,491.5 3423.6,489.0 3449.0,488.0C3488.1,486.6 3518.7,489.7 3548.3,498.1C3579.2,506.8 3601.7,519.8 3623.6,541.5C3656.3,574.1 3676.3,613.4 3683.6,659.6C3685.8,673.7 3686.5,704.0 3685.1,719.6C3680.0,775.5 3660.8,831.7 3626.8,890.9C3578.9,974.2 3497.7,1052.9 3404.9,1106.0C3320.1,1154.6 3225.2,1186.4 3107.0,1206.0C3082.8,1210.0 3047.0,1215.0 3027.2,1217.1C3017.6,1218.1 3016.0,1218.6 3016.0,1220.1C3016.0,1221.1 3017.1,1228.3 3018.4,1236.2C3028.5,1295.4 3050.8,1341.7 3085.3,1374.6C3114.4,1402.5 3149.3,1419.6 3191.8,1427.0C3265.7,1439.8 3353.1,1419.5 3434.6,1370.5C3450.1,1361.1 3486.1,1337.4 3502.0,1326.0C3571.1,1276.4 3639.8,1212.3 3701.5,1139.5C3806.5,1015.7 3895.5,858.7 3955.0,692.5C3968.1,655.8 3985.8,599.4 3990.0,581.2C3990.7,578.4 3991.7,576.0 3992.2,576.0C3993.6,576.0 3992.3,590.2 3990.9,591.1C3990.1,591.5 3990.1,591.9 3990.8,592.1C3991.5,592.4 3990.9,600.0 3988.9,615.3C3968.2,776.1 3924.1,930.1 3856.8,1077.0C3788.0,1227.0 3694.7,1367.5 3581.1,1492.0C3564.3,1510.4 3520.1,1554.8 3500.5,1572.9C3420.3,1646.9 3340.3,1703.3 3261.5,1741.6C3197.0,1772.9 3134.8,1790.9 3073.5,1796.0C3059.8,1797.1 3024.9,1797.1 3011.5,1795.9ZM3060.5,1142.4C3131.8,1120.7 3218.5,1074.4 3286.2,1021.9C3371.5,955.7 3443.6,869.7 3487.4,782.0C3516.4,723.7 3522.9,663.2 3504.2,625.0C3499.0,614.3 3486.3,601.6 3476.0,596.7C3458.8,588.5 3437.0,586.6 3412.0,591.0C3364.1,599.4 3312.4,626.6 3262.0,670.1C3246.8,683.2 3213.1,717.1 3199.4,733.0C3103.7,844.1 3043.3,971.9 3020.1,1112.5C3017.7,1126.8 3015.0,1147.4 3015.0,1151.1L3015.0,1153.7L3030.2,1150.3C3038.6,1148.5 3052.2,1144.9 3060.5,1142.4ZM1998.2,1101.4L2004.8,1100.7L2008.1,1093.1C2036.0,1027.6 2054.2,971.5 2065.4,917.4C2085.0,822.3 2081.4,732.4 2054.9,655.2C2046.4,630.5 2033.2,609.1 2019.2,597.5C2011.5,591.1 1995.5,582.9 1986.0,580.5C1982.4,579.6 1974.5,578.6 1968.5,578.3C1958.7,577.8 1956.4,578.0 1948.0,580.3C1892.1,595.3 1842.8,641.7 1809.4,710.5C1791.8,746.8 1780.0,786.8 1774.5,829.0C1772.2,846.4 1771.4,882.4 1772.9,900.1C1778.1,960.6 1797.3,1008.3 1830.4,1042.8C1846.1,1059.0 1856.2,1066.6 1876.5,1077.0C1898.5,1088.3 1912.8,1092.9 1940.1,1097.4C1962.5,1101.2 1984.2,1102.7 1998.2,1101.4ZM3162.0,427.0C3160.8,426.3 3160.9,426.0 3162.5,425.4C3193.0,414.2 3252.2,387.0 3294.5,364.8C3458.5,278.6 3601.7,164.9 3714.4,31.3L3727.2,16.0L3732.9,20.4C3756.0,38.5 3798.0,71.6 3825.1,93.2C3890.8,145.4 3909.5,160.6 3909.5,161.5C3909.5,162.1 3900.2,167.6 3889.0,173.8C3749.9,250.9 3605.6,314.5 3451.5,366.7C3404.1,382.7 3354.4,395.7 3301.5,405.9C3274.1,411.2 3224.6,419.3 3200.0,422.5C3189.3,423.9 3178.5,425.5 3176.0,426.0C3167.8,427.6 3163.5,427.9 3162.0,427.0Z"/></svg>
+    </a>
+    <nav class="principal" aria-label="Principal">
+      <a href="#tienda" data-ruta="tienda">Tienda</a>
+      <a href="#tienda?prenda=huipil" data-ruta="huipil">Huipiles</a>
+      <a href="#tienda?prenda=corte" data-ruta="corte">Cortes</a>
+      <a href="#regiones">Regiones</a>
+    </nav>
+    <div class="acciones">
+      <div class="moneda" role="group" aria-label="Moneda">
+        <button type="button" data-moneda="GTQ" aria-pressed="true">Q</button>
+        <button type="button" data-moneda="USD" aria-pressed="false">US$</button>
+      </div>
+      <button class="icono-btn" id="abrir-carrito" type="button" aria-label="Abrir carrito">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="burbuja" id="cuenta-carrito" hidden>0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+  <!-- INICIO -->
+  <section class="vista" id="v-inicio" aria-label="Inicio">
+    <div class="hero">
+      <video id="video-hero" muted playsinline loop autoplay preload="auto" poster="video/poster.webp" aria-hidden="true">
+        <source src="video/historia.webm" type="video/webm"><source src="video/historia.mp4" type="video/mp4">
+      </video>
+      <img class="sello" src="img/sello.webp" alt="Sello de Jolé">
+      <div class="nombre">
+        <svg viewBox="0 0 4000 1815" role="img" aria-label="Jolé"><path fill="currentColor" fill-rule="evenodd" d="M373.5,1806.9C299.2,1801.2 222.9,1775.4 164.0,1736.0C127.0,1711.2 94.0,1678.2 70.7,1642.8C20.5,1566.4 -1.2,1460.7 12.1,1357.0C24.8,1257.1 67.7,1165.7 139.6,1085.4C207.6,1009.5 299.2,955.9 401.5,932.1C410.9,930.0 420.0,927.9 421.9,927.5C425.1,926.8 424.9,927.2 414.8,938.6C366.4,993.4 339.3,1047.3 332.9,1101.5C331.2,1115.5 332.3,1142.7 335.0,1155.5C337.7,1168.3 343.6,1186.1 348.9,1197.1C364.7,1230.3 394.7,1257.3 428.0,1268.1C448.4,1274.7 454.1,1275.5 481.0,1275.5C508.2,1275.5 516.8,1274.3 542.0,1267.5C636.9,1241.9 734.6,1167.4 838.1,1042.0C885.8,984.2 926.5,928.1 1009.5,806.0C1070.5,716.2 1104.8,668.7 1154.4,605.0C1242.2,492.2 1326.8,400.4 1422.0,314.6C1494.3,249.4 1554.9,201.1 1631.2,148.0C1645.9,137.8 1657.7,129.4 1657.5,129.2C1657.0,128.7 1521.8,157.5 1480.0,167.0C1333.9,200.4 1234.2,233.6 1146.0,278.1C1054.5,324.2 992.8,373.2 939.6,441.6C891.6,503.3 857.5,576.6 847.0,641.0C845.9,647.9 845.0,654.9 845.0,656.5C845.0,663.1 846.1,663.4 803.5,645.1C789.3,638.9 762.5,625.2 748.5,616.7C670.6,570.0 630.1,511.2 616.0,424.7C613.0,406.1 612.0,393.5 611.9,372.0C611.9,349.6 612.9,338.4 617.0,318.0C637.2,217.2 715.5,134.3 835.1,87.3C902.4,60.8 969.0,46.3 1046.5,41.4C1073.5,39.7 1138.0,39.5 1166.1,41.0C1210.0,43.4 1255.7,47.4 1331.5,55.5C1461.9,69.5 1493.7,71.8 1566.0,72.7C1604.5,73.1 1620.2,72.9 1642.0,71.6C1725.2,66.6 1797.4,55.8 1879.4,36.0C1890.3,33.4 1896.7,32.3 1897.3,32.9C1898.0,33.6 1889.1,40.0 1872.4,50.9C1818.3,86.3 1780.0,117.4 1730.6,166.0C1638.7,256.5 1542.3,372.5 1450.5,503.0C1359.3,632.6 1268.2,789.5 1198.0,937.4C1173.6,988.9 1162.3,1014.4 1131.5,1088.5C1103.4,1155.9 1091.6,1183.0 1069.7,1230.1C938.5,1511.8 790.7,1684.1 612.5,1762.8C582.5,1776.1 557.7,1784.7 524.5,1793.4C496.9,1800.6 472.2,1804.9 445.6,1807.0C430.7,1808.2 389.5,1808.1 373.5,1806.9ZM1445.0,1797.0C1387.5,1792.4 1337.4,1777.8 1294.3,1752.9C1232.8,1717.6 1185.3,1662.4 1161.7,1599.0C1140.2,1541.1 1129.7,1485.8 1128.3,1423.5C1126.8,1356.6 1136.7,1294.1 1159.7,1223.5C1183.6,1150.3 1213.8,1091.4 1256.9,1034.2C1283.0,999.5 1317.3,964.8 1349.5,940.5C1398.6,903.5 1457.1,876.0 1525.2,858.0L1540.0,854.1L1540.0,856.8C1540.0,861.4 1542.8,878.5 1545.6,890.8C1549.3,907.5 1556.0,929.9 1563.6,951.7C1567.2,962.0 1570.4,971.4 1570.7,972.6C1571.1,974.3 1570.3,975.1 1565.8,977.0C1494.1,1007.6 1433.8,1124.3 1420.9,1257.5C1419.3,1274.1 1419.3,1314.5 1420.9,1327.5C1423.8,1350.8 1428.7,1370.2 1436.4,1388.3C1461.7,1447.3 1508.4,1488.0 1566.5,1501.6C1577.8,1504.3 1579.8,1504.4 1602.0,1504.4C1624.3,1504.5 1626.1,1504.3 1637.4,1501.6C1685.1,1490.4 1732.9,1464.9 1779.5,1426.1C1792.0,1415.7 1819.8,1388.2 1834.8,1371.5C1875.5,1326.0 1915.6,1268.4 1960.7,1190.6C1968.0,1177.9 1974.0,1167.3 1974.0,1166.8C1974.0,1166.4 1969.4,1166.0 1963.8,1166.0C1953.6,1166.0 1927.2,1163.3 1909.0,1160.5C1858.6,1152.5 1812.7,1138.5 1771.5,1118.6C1728.3,1097.6 1698.3,1077.1 1668.1,1047.6C1610.3,991.0 1577.7,927.0 1568.4,851.9C1566.3,835.3 1566.0,797.1 1567.9,781.5C1575.9,712.5 1601.5,650.3 1643.6,597.5C1655.0,583.3 1681.7,556.5 1694.5,546.4C1740.4,510.2 1786.1,489.8 1840.0,481.3C1849.2,479.9 1857.4,479.5 1881.0,479.5C1913.2,479.6 1921.0,480.4 1947.8,487.0C2027.0,506.4 2090.6,560.0 2127.7,638.9C2178.1,745.7 2181.9,874.6 2139.5,1038.5C2136.5,1050.0 2132.7,1064.2 2131.0,1070.0C2129.4,1075.8 2128.0,1080.8 2128.0,1081.2C2128.0,1082.2 2139.0,1078.9 2152.9,1073.6C2167.1,1068.3 2184.4,1060.4 2208.0,1048.4L2224.5,1040.1L2229.9,1026.8C2247.1,984.3 2294.5,889.1 2330.5,824.5C2456.4,598.5 2602.9,394.2 2780.9,196.1C2810.9,162.7 2896.1,76.5 2909.2,66.2C2917.9,59.4 2923.9,56.4 2939.0,51.0C2993.7,31.5 3081.5,16.8 3180.5,10.6C3228.4,7.6 3242.9,7.6 3299.0,11.1C3326.4,12.7 3325.4,11.6 3310.3,24.0C3233.0,87.3 3159.3,158.7 3074.9,252.1C2949.7,390.5 2791.4,596.0 2676.4,769.5C2594.8,892.6 2536.3,995.2 2496.7,1085.0C2466.8,1152.8 2448.8,1211.7 2444.0,1258.1C2442.5,1272.9 2442.7,1300.7 2444.4,1312.0C2450.4,1351.2 2468.6,1377.1 2500.4,1392.1C2514.4,1398.6 2526.1,1401.2 2544.0,1401.8C2566.2,1402.4 2582.3,1398.9 2601.1,1389.4C2610.1,1384.9 2627.0,1373.4 2635.5,1366.1C2639.3,1362.8 2642.7,1360.1 2643.0,1360.0C2643.3,1360.0 2643.4,1369.3 2643.2,1380.7C2641.9,1467.0 2656.3,1537.8 2685.6,1589.2C2689.1,1595.4 2691.9,1600.9 2691.6,1601.5C2691.4,1602.0 2688.2,1606.3 2684.4,1611.0C2625.2,1684.8 2545.0,1742.7 2464.1,1770.1C2434.1,1780.3 2409.7,1785.5 2379.1,1788.4C2283.8,1797.5 2203.2,1761.2 2158.7,1689.2C2133.4,1648.4 2117.6,1596.1 2112.4,1536.3C2110.4,1513.4 2110.9,1457.2 2113.4,1433.8C2122.3,1348.0 2142.2,1265.4 2181.5,1151.5C2186.6,1136.7 2191.2,1123.6 2191.6,1122.6C2192.2,1121.1 2192.0,1120.8 2190.9,1121.3C2190.1,1121.6 2182.8,1124.9 2174.5,1128.5C2156.6,1136.4 2139.9,1142.6 2119.5,1149.0L2104.6,1153.7L2099.7,1165.6C2012.7,1377.8 1928.0,1519.5 1826.5,1622.9C1762.9,1687.7 1701.7,1731.0 1627.3,1763.9C1589.7,1780.6 1549.9,1791.2 1509.5,1795.4C1491.7,1797.3 1458.6,1798.1 1445.0,1797.0ZM3011.5,1795.9C2940.2,1789.8 2873.7,1762.9 2811.8,1715.1C2800.1,1706.0 2772.2,1677.6 2761.6,1664.0C2710.1,1597.8 2681.2,1516.1 2674.9,1419.1C2673.4,1395.7 2674.2,1341.3 2676.4,1319.5C2690.1,1183.9 2739.5,1048.1 2824.3,913.0C2888.1,811.3 2964.5,725.2 3055.5,652.5C3156.7,571.7 3264.0,519.3 3373.0,497.6C3403.7,491.5 3423.6,489.0 3449.0,488.0C3488.1,486.6 3518.7,489.7 3548.3,498.1C3579.2,506.8 3601.7,519.8 3623.6,541.5C3656.3,574.1 3676.3,613.4 3683.6,659.6C3685.8,673.7 3686.5,704.0 3685.1,719.6C3680.0,775.5 3660.8,831.7 3626.8,890.9C3578.9,974.2 3497.7,1052.9 3404.9,1106.0C3320.1,1154.6 3225.2,1186.4 3107.0,1206.0C3082.8,1210.0 3047.0,1215.0 3027.2,1217.1C3017.6,1218.1 3016.0,1218.6 3016.0,1220.1C3016.0,1221.1 3017.1,1228.3 3018.4,1236.2C3028.5,1295.4 3050.8,1341.7 3085.3,1374.6C3114.4,1402.5 3149.3,1419.6 3191.8,1427.0C3265.7,1439.8 3353.1,1419.5 3434.6,1370.5C3450.1,1361.1 3486.1,1337.4 3502.0,1326.0C3571.1,1276.4 3639.8,1212.3 3701.5,1139.5C3806.5,1015.7 3895.5,858.7 3955.0,692.5C3968.1,655.8 3985.8,599.4 3990.0,581.2C3990.7,578.4 3991.7,576.0 3992.2,576.0C3993.6,576.0 3992.3,590.2 3990.9,591.1C3990.1,591.5 3990.1,591.9 3990.8,592.1C3991.5,592.4 3990.9,600.0 3988.9,615.3C3968.2,776.1 3924.1,930.1 3856.8,1077.0C3788.0,1227.0 3694.7,1367.5 3581.1,1492.0C3564.3,1510.4 3520.1,1554.8 3500.5,1572.9C3420.3,1646.9 3340.3,1703.3 3261.5,1741.6C3197.0,1772.9 3134.8,1790.9 3073.5,1796.0C3059.8,1797.1 3024.9,1797.1 3011.5,1795.9ZM3060.5,1142.4C3131.8,1120.7 3218.5,1074.4 3286.2,1021.9C3371.5,955.7 3443.6,869.7 3487.4,782.0C3516.4,723.7 3522.9,663.2 3504.2,625.0C3499.0,614.3 3486.3,601.6 3476.0,596.7C3458.8,588.5 3437.0,586.6 3412.0,591.0C3364.1,599.4 3312.4,626.6 3262.0,670.1C3246.8,683.2 3213.1,717.1 3199.4,733.0C3103.7,844.1 3043.3,971.9 3020.1,1112.5C3017.7,1126.8 3015.0,1147.4 3015.0,1151.1L3015.0,1153.7L3030.2,1150.3C3038.6,1148.5 3052.2,1144.9 3060.5,1142.4ZM1998.2,1101.4L2004.8,1100.7L2008.1,1093.1C2036.0,1027.6 2054.2,971.5 2065.4,917.4C2085.0,822.3 2081.4,732.4 2054.9,655.2C2046.4,630.5 2033.2,609.1 2019.2,597.5C2011.5,591.1 1995.5,582.9 1986.0,580.5C1982.4,579.6 1974.5,578.6 1968.5,578.3C1958.7,577.8 1956.4,578.0 1948.0,580.3C1892.1,595.3 1842.8,641.7 1809.4,710.5C1791.8,746.8 1780.0,786.8 1774.5,829.0C1772.2,846.4 1771.4,882.4 1772.9,900.1C1778.1,960.6 1797.3,1008.3 1830.4,1042.8C1846.1,1059.0 1856.2,1066.6 1876.5,1077.0C1898.5,1088.3 1912.8,1092.9 1940.1,1097.4C1962.5,1101.2 1984.2,1102.7 1998.2,1101.4ZM3162.0,427.0C3160.8,426.3 3160.9,426.0 3162.5,425.4C3193.0,414.2 3252.2,387.0 3294.5,364.8C3458.5,278.6 3601.7,164.9 3714.4,31.3L3727.2,16.0L3732.9,20.4C3756.0,38.5 3798.0,71.6 3825.1,93.2C3890.8,145.4 3909.5,160.6 3909.5,161.5C3909.5,162.1 3900.2,167.6 3889.0,173.8C3749.9,250.9 3605.6,314.5 3451.5,366.7C3404.1,382.7 3354.4,395.7 3301.5,405.9C3274.1,411.2 3224.6,419.3 3200.0,422.5C3189.3,423.9 3178.5,425.5 3176.0,426.0C3167.8,427.6 3163.5,427.9 3162.0,427.0Z"/></svg>
+        <div class="lema">VISTE CON INTENCIÓN</div>
+      </div>
+      <button class="pausa" id="pausa-hero" type="button" aria-label="Pausar el video">❚❚</button>
+      <div class="cta">
+        <a class="btn" href="#tienda">Ver la colección</a>
+        <a class="btn sec" href="#regiones">Comprar por región</a>
+      </div>
+    </div>
+
+    <div class="franja-confianza gutter">
+      <ul class="ancho">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c3 4 6 6 6 10a6 6 0 0 1-12 0c0-4 3-6 6-10Z"/></svg><span>Tejido a mano en telar de cintura</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg><span>Envíos a Guatemala y al extranjero</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/></svg><span>Cambios de talla en 30 días</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Pago seguro con tarjeta o PayPal</span></li>
+      </ul>
+    </div>
+
+    <section class="seccion gutter" id="regiones" aria-labelledby="t-regiones">
+      <div class="ancho">
+        <div class="cab-seccion"><div><div class="eti">Comprar por región</div><h2 id="t-regiones">Cada región, su propio lenguaje</h2><p>El color, la figura y el corte de un traje dicen de dónde viene. Empieza por el lugar.</p></div><a class="btn sec" href="#tienda">Ver todo</a></div>
+        <div class="regiones" id="lista-regiones"></div>
+      </div>
+    </section>
+
+    <section class="seccion gutter" style="background:var(--crema)" aria-labelledby="t-nuevos">
+      <div class="ancho">
+        <div class="cab-seccion"><div><div class="eti">Recién llegados</div><h2 id="t-nuevos">Piezas para mirar de cerca</h2><p>Abre cualquier prenda y gírala en 3D para ver el tejido por delante y por detrás.</p></div><a class="btn sec" href="#tienda">Toda la colección</a></div>
+        <div class="rejilla" id="destacados"></div>
+      </div>
+    </section>
+
+    <section class="seccion gutter" aria-labelledby="t-hist">
+      <div class="ancho historia-bloque">
+        <img src="img/p/h00.webp" alt="Huipil de brocado con rombos y zigzags en un maniquí" loading="lazy">
+        <div>
+          <div class="eti">Nuestra historia</div>
+          <h2 id="t-hist" style="font-size:clamp(34px,4vw,52px);margin:8px 0 16px">Una carta que se volvió traje</h2>
+          <p>Jolé nació de una carta entre una madre en Estados Unidos y una hija en Guatemala. Hoy esa hija elige, una por una, las piezas que llegan a esta tienda, para que la belleza del tejido viaje tan lejos como viajó aquella carta.</p>
+          <p class="eti" style="margin-top:20px"><span class="ph">[Texto de ejemplo: confirmar con la dueña]</span></p>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section class="vista gutter" id="v-tienda" aria-label="Catálogo">
+    <div class="ancho">
+      <div class="migas"><a href="#inicio">Inicio</a> / Tienda</div>
+      <div class="cab-seccion" style="margin-bottom:18px"><div><h1 style="font-size:clamp(38px,4.6vw,58px)" id="t-catalogo">Toda la colección</h1><p id="resumen-cat" style="color:var(--suave);margin:6px 0 0"></p></div></div>
+      <div class="catalogo">
+        <aside class="filtros" id="filtros" aria-label="Filtros">
+          <fieldset><legend class="eti">Región</legend><div id="f-region"></div></fieldset>
+          <fieldset><legend class="eti">Prenda</legend><div id="f-prenda"></div></fieldset>
+          <fieldset><legend class="eti">Precio</legend><div id="f-precio"></div></fieldset>
+          <label style="font-size:15px"><input type="checkbox" id="f-3d"> Solo con vista 3D</label>
+          <button class="btn cerrar-filtros" type="button" id="cerrar-filtros">Ver resultados</button>
+        </aside>
+        <div>
+          <div class="barra-cat">
+            <button class="btn sec ver-filtros" type="button" id="ver-filtros">Filtrar</button>
+            <div class="activos" id="activos"></div>
+            <label style="margin-left:auto;font-size:14px;display:flex;gap:8px;align-items:center">Ordenar
+              <select id="orden"><option value="rel">Destacados</option><option value="asc">Precio: menor a mayor</option><option value="desc">Precio: mayor a menor</option><option value="nuevo">Más nuevos</option></select>
+            </label>
+          </div>
+          <div class="rejilla" id="rejilla" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"></div>
+          <div class="vacio" id="vacio" hidden>No hay prendas con esos filtros. <button class="link" type="button" id="limpiar">Quitar filtros</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FICHA -->
+  <section class="vista gutter" id="v-producto" aria-label="Producto">
+    <div class="ancho" id="ficha"></div>
+  </section>
+
+  <!-- CHECKOUT -->
+  <section class="vista gutter" id="v-checkout" aria-label="Finalizar compra">
+    <div class="ancho checkout">
+      <div>
+        <ol class="pasos" id="pasos"></ol>
+        <form id="form-checkout" novalidate></form>
+      </div>
+      <aside class="resumen" id="resumen" aria-label="Resumen del pedido"></aside>
+    </div>
+  </section>
+
+  <!-- CONFIRMACIÓN -->
+  <section class="vista gutter" id="v-gracias" aria-label="Pedido confirmado">
+    <div class="confirmacion" id="gracias"></div>
+  </section>
+</main>
+
+<footer class="pie gutter">
+  <div class="ancho">
+    <div class="cols">
+      <div><svg viewBox="0 0 4000 1815" style="height:40px;width:auto;color:var(--rosa)" aria-label="Jolé"><path fill="currentColor" fill-rule="evenodd" d="M373.5,1806.9C299.2,1801.2 222.9,1775.4 164.0,1736.0C127.0,1711.2 94.0,1678.2 70.7,1642.8C20.5,1566.4 -1.2,1460.7 12.1,1357.0C24.8,1257.1 67.7,1165.7 139.6,1085.4C207.6,1009.5 299.2,955.9 401.5,932.1C410.9,930.0 420.0,927.9 421.9,927.5C425.1,926.8 424.9,927.2 414.8,938.6C366.4,993.4 339.3,1047.3 332.9,1101.5C331.2,1115.5 332.3,1142.7 335.0,1155.5C337.7,1168.3 343.6,1186.1 348.9,1197.1C364.7,1230.3 394.7,1257.3 428.0,1268.1C448.4,1274.7 454.1,1275.5 481.0,1275.5C508.2,1275.5 516.8,1274.3 542.0,1267.5C636.9,1241.9 734.6,1167.4 838.1,1042.0C885.8,984.2 926.5,928.1 1009.5,806.0C1070.5,716.2 1104.8,668.7 1154.4,605.0C1242.2,492.2 1326.8,400.4 1422.0,314.6C1494.3,249.4 1554.9,201.1 1631.2,148.0C1645.9,137.8 1657.7,129.4 1657.5,129.2C1657.0,128.7 1521.8,157.5 1480.0,167.0C1333.9,200.4 1234.2,233.6 1146.0,278.1C1054.5,324.2 992.8,373.2 939.6,441.6C891.6,503.3 857.5,576.6 847.0,641.0C845.9,647.9 845.0,654.9 845.0,656.5C845.0,663.1 846.1,663.4 803.5,645.1C789.3,638.9 762.5,625.2 748.5,616.7C670.6,570.0 630.1,511.2 616.0,424.7C613.0,406.1 612.0,393.5 611.9,372.0C611.9,349.6 612.9,338.4 617.0,318.0C637.2,217.2 715.5,134.3 835.1,87.3C902.4,60.8 969.0,46.3 1046.5,41.4C1073.5,39.7 1138.0,39.5 1166.1,41.0C1210.0,43.4 1255.7,47.4 1331.5,55.5C1461.9,69.5 1493.7,71.8 1566.0,72.7C1604.5,73.1 1620.2,72.9 1642.0,71.6C1725.2,66.6 1797.4,55.8 1879.4,36.0C1890.3,33.4 1896.7,32.3 1897.3,32.9C1898.0,33.6 1889.1,40.0 1872.4,50.9C1818.3,86.3 1780.0,117.4 1730.6,166.0C1638.7,256.5 1542.3,372.5 1450.5,503.0C1359.3,632.6 1268.2,789.5 1198.0,937.4C1173.6,988.9 1162.3,1014.4 1131.5,1088.5C1103.4,1155.9 1091.6,1183.0 1069.7,1230.1C938.5,1511.8 790.7,1684.1 612.5,1762.8C582.5,1776.1 557.7,1784.7 524.5,1793.4C496.9,1800.6 472.2,1804.9 445.6,1807.0C430.7,1808.2 389.5,1808.1 373.5,1806.9ZM1445.0,1797.0C1387.5,1792.4 1337.4,1777.8 1294.3,1752.9C1232.8,1717.6 1185.3,1662.4 1161.7,1599.0C1140.2,1541.1 1129.7,1485.8 1128.3,1423.5C1126.8,1356.6 1136.7,1294.1 1159.7,1223.5C1183.6,1150.3 1213.8,1091.4 1256.9,1034.2C1283.0,999.5 1317.3,964.8 1349.5,940.5C1398.6,903.5 1457.1,876.0 1525.2,858.0L1540.0,854.1L1540.0,856.8C1540.0,861.4 1542.8,878.5 1545.6,890.8C1549.3,907.5 1556.0,929.9 1563.6,951.7C1567.2,962.0 1570.4,971.4 1570.7,972.6C1571.1,974.3 1570.3,975.1 1565.8,977.0C1494.1,1007.6 1433.8,1124.3 1420.9,1257.5C1419.3,1274.1 1419.3,1314.5 1420.9,1327.5C1423.8,1350.8 1428.7,1370.2 1436.4,1388.3C1461.7,1447.3 1508.4,1488.0 1566.5,1501.6C1577.8,1504.3 1579.8,1504.4 1602.0,1504.4C1624.3,1504.5 1626.1,1504.3 1637.4,1501.6C1685.1,1490.4 1732.9,1464.9 1779.5,1426.1C1792.0,1415.7 1819.8,1388.2 1834.8,1371.5C1875.5,1326.0 1915.6,1268.4 1960.7,1190.6C1968.0,1177.9 1974.0,1167.3 1974.0,1166.8C1974.0,1166.4 1969.4,1166.0 1963.8,1166.0C1953.6,1166.0 1927.2,1163.3 1909.0,1160.5C1858.6,1152.5 1812.7,1138.5 1771.5,1118.6C1728.3,1097.6 1698.3,1077.1 1668.1,1047.6C1610.3,991.0 1577.7,927.0 1568.4,851.9C1566.3,835.3 1566.0,797.1 1567.9,781.5C1575.9,712.5 1601.5,650.3 1643.6,597.5C1655.0,583.3 1681.7,556.5 1694.5,546.4C1740.4,510.2 1786.1,489.8 1840.0,481.3C1849.2,479.9 1857.4,479.5 1881.0,479.5C1913.2,479.6 1921.0,480.4 1947.8,487.0C2027.0,506.4 2090.6,560.0 2127.7,638.9C2178.1,745.7 2181.9,874.6 2139.5,1038.5C2136.5,1050.0 2132.7,1064.2 2131.0,1070.0C2129.4,1075.8 2128.0,1080.8 2128.0,1081.2C2128.0,1082.2 2139.0,1078.9 2152.9,1073.6C2167.1,1068.3 2184.4,1060.4 2208.0,1048.4L2224.5,1040.1L2229.9,1026.8C2247.1,984.3 2294.5,889.1 2330.5,824.5C2456.4,598.5 2602.9,394.2 2780.9,196.1C2810.9,162.7 2896.1,76.5 2909.2,66.2C2917.9,59.4 2923.9,56.4 2939.0,51.0C2993.7,31.5 3081.5,16.8 3180.5,10.6C3228.4,7.6 3242.9,7.6 3299.0,11.1C3326.4,12.7 3325.4,11.6 3310.3,24.0C3233.0,87.3 3159.3,158.7 3074.9,252.1C2949.7,390.5 2791.4,596.0 2676.4,769.5C2594.8,892.6 2536.3,995.2 2496.7,1085.0C2466.8,1152.8 2448.8,1211.7 2444.0,1258.1C2442.5,1272.9 2442.7,1300.7 2444.4,1312.0C2450.4,1351.2 2468.6,1377.1 2500.4,1392.1C2514.4,1398.6 2526.1,1401.2 2544.0,1401.8C2566.2,1402.4 2582.3,1398.9 2601.1,1389.4C2610.1,1384.9 2627.0,1373.4 2635.5,1366.1C2639.3,1362.8 2642.7,1360.1 2643.0,1360.0C2643.3,1360.0 2643.4,1369.3 2643.2,1380.7C2641.9,1467.0 2656.3,1537.8 2685.6,1589.2C2689.1,1595.4 2691.9,1600.9 2691.6,1601.5C2691.4,1602.0 2688.2,1606.3 2684.4,1611.0C2625.2,1684.8 2545.0,1742.7 2464.1,1770.1C2434.1,1780.3 2409.7,1785.5 2379.1,1788.4C2283.8,1797.5 2203.2,1761.2 2158.7,1689.2C2133.4,1648.4 2117.6,1596.1 2112.4,1536.3C2110.4,1513.4 2110.9,1457.2 2113.4,1433.8C2122.3,1348.0 2142.2,1265.4 2181.5,1151.5C2186.6,1136.7 2191.2,1123.6 2191.6,1122.6C2192.2,1121.1 2192.0,1120.8 2190.9,1121.3C2190.1,1121.6 2182.8,1124.9 2174.5,1128.5C2156.6,1136.4 2139.9,1142.6 2119.5,1149.0L2104.6,1153.7L2099.7,1165.6C2012.7,1377.8 1928.0,1519.5 1826.5,1622.9C1762.9,1687.7 1701.7,1731.0 1627.3,1763.9C1589.7,1780.6 1549.9,1791.2 1509.5,1795.4C1491.7,1797.3 1458.6,1798.1 1445.0,1797.0ZM3011.5,1795.9C2940.2,1789.8 2873.7,1762.9 2811.8,1715.1C2800.1,1706.0 2772.2,1677.6 2761.6,1664.0C2710.1,1597.8 2681.2,1516.1 2674.9,1419.1C2673.4,1395.7 2674.2,1341.3 2676.4,1319.5C2690.1,1183.9 2739.5,1048.1 2824.3,913.0C2888.1,811.3 2964.5,725.2 3055.5,652.5C3156.7,571.7 3264.0,519.3 3373.0,497.6C3403.7,491.5 3423.6,489.0 3449.0,488.0C3488.1,486.6 3518.7,489.7 3548.3,498.1C3579.2,506.8 3601.7,519.8 3623.6,541.5C3656.3,574.1 3676.3,613.4 3683.6,659.6C3685.8,673.7 3686.5,704.0 3685.1,719.6C3680.0,775.5 3660.8,831.7 3626.8,890.9C3578.9,974.2 3497.7,1052.9 3404.9,1106.0C3320.1,1154.6 3225.2,1186.4 3107.0,1206.0C3082.8,1210.0 3047.0,1215.0 3027.2,1217.1C3017.6,1218.1 3016.0,1218.6 3016.0,1220.1C3016.0,1221.1 3017.1,1228.3 3018.4,1236.2C3028.5,1295.4 3050.8,1341.7 3085.3,1374.6C3114.4,1402.5 3149.3,1419.6 3191.8,1427.0C3265.7,1439.8 3353.1,1419.5 3434.6,1370.5C3450.1,1361.1 3486.1,1337.4 3502.0,1326.0C3571.1,1276.4 3639.8,1212.3 3701.5,1139.5C3806.5,1015.7 3895.5,858.7 3955.0,692.5C3968.1,655.8 3985.8,599.4 3990.0,581.2C3990.7,578.4 3991.7,576.0 3992.2,576.0C3993.6,576.0 3992.3,590.2 3990.9,591.1C3990.1,591.5 3990.1,591.9 3990.8,592.1C3991.5,592.4 3990.9,600.0 3988.9,615.3C3968.2,776.1 3924.1,930.1 3856.8,1077.0C3788.0,1227.0 3694.7,1367.5 3581.1,1492.0C3564.3,1510.4 3520.1,1554.8 3500.5,1572.9C3420.3,1646.9 3340.3,1703.3 3261.5,1741.6C3197.0,1772.9 3134.8,1790.9 3073.5,1796.0C3059.8,1797.1 3024.9,1797.1 3011.5,1795.9ZM3060.5,1142.4C3131.8,1120.7 3218.5,1074.4 3286.2,1021.9C3371.5,955.7 3443.6,869.7 3487.4,782.0C3516.4,723.7 3522.9,663.2 3504.2,625.0C3499.0,614.3 3486.3,601.6 3476.0,596.7C3458.8,588.5 3437.0,586.6 3412.0,591.0C3364.1,599.4 3312.4,626.6 3262.0,670.1C3246.8,683.2 3213.1,717.1 3199.4,733.0C3103.7,844.1 3043.3,971.9 3020.1,1112.5C3017.7,1126.8 3015.0,1147.4 3015.0,1151.1L3015.0,1153.7L3030.2,1150.3C3038.6,1148.5 3052.2,1144.9 3060.5,1142.4ZM1998.2,1101.4L2004.8,1100.7L2008.1,1093.1C2036.0,1027.6 2054.2,971.5 2065.4,917.4C2085.0,822.3 2081.4,732.4 2054.9,655.2C2046.4,630.5 2033.2,609.1 2019.2,597.5C2011.5,591.1 1995.5,582.9 1986.0,580.5C1982.4,579.6 1974.5,578.6 1968.5,578.3C1958.7,577.8 1956.4,578.0 1948.0,580.3C1892.1,595.3 1842.8,641.7 1809.4,710.5C1791.8,746.8 1780.0,786.8 1774.5,829.0C1772.2,846.4 1771.4,882.4 1772.9,900.1C1778.1,960.6 1797.3,1008.3 1830.4,1042.8C1846.1,1059.0 1856.2,1066.6 1876.5,1077.0C1898.5,1088.3 1912.8,1092.9 1940.1,1097.4C1962.5,1101.2 1984.2,1102.7 1998.2,1101.4ZM3162.0,427.0C3160.8,426.3 3160.9,426.0 3162.5,425.4C3193.0,414.2 3252.2,387.0 3294.5,364.8C3458.5,278.6 3601.7,164.9 3714.4,31.3L3727.2,16.0L3732.9,20.4C3756.0,38.5 3798.0,71.6 3825.1,93.2C3890.8,145.4 3909.5,160.6 3909.5,161.5C3909.5,162.1 3900.2,167.6 3889.0,173.8C3749.9,250.9 3605.6,314.5 3451.5,366.7C3404.1,382.7 3354.4,395.7 3301.5,405.9C3274.1,411.2 3224.6,419.3 3200.0,422.5C3189.3,423.9 3178.5,425.5 3176.0,426.0C3167.8,427.6 3163.5,427.9 3162.0,427.0Z"/></svg><p style="margin-top:12px">Trajes típicos de Guatemala, elegidos uno por uno y enviados con cuidado.</p></div>
+      <div><h4>Tienda</h4><a href="#tienda?prenda=huipil">Huipiles</a><a href="#tienda?prenda=corte">Cortes</a><a href="#tienda?prenda=faja">Fajas</a><a href="#tienda?prenda=perraje">Perrajes</a></div>
+      <div><h4>Ayuda</h4><a href="#tienda">Guía de tallas</a><a href="#tienda">Envíos y entregas</a><a href="#tienda">Cambios y devoluciones</a></div>
+      <div><h4>Contacto</h4><p><span style="color:var(--rosa)">[WhatsApp]</span><br><span style="color:var(--rosa)">[correo]</span><br><span style="color:var(--rosa)">[@redes]</span></p></div>
+    </div>
+    <p style="margin-top:32px;font-size:12px;opacity:.7">© Jolé · Prototipo de tienda · Todos los datos son de ejemplo</p>
+  </div>
+</footer>
+
+<div class="velo" id="velo"></div>
+<aside class="cajon" id="cajon" aria-label="Carrito" aria-hidden="true">
+  <header><h2>Tu carrito</h2><button class="icono-btn" type="button" id="cerrar-carrito" aria-label="Cerrar carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+  <div class="cuerpo" id="lineas-carrito"></div>
+  <footer id="pie-carrito"></footer>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+/* ---------- datos de ejemplo ---------- */
+const TC = 7.75;   // tipo de cambio de ejemplo Q por US$
+const REGIONES = [
+  {id:"quiche", n:"Quiché", img:"h04"}, {id:"quetzaltenango", n:"Quetzaltenango", img:"c02"},
+  {id:"solola", n:"Sololá", img:"h08"}, {id:"totonicapan", n:"Totonicapán", img:"h05"}, {id:"huehuetenango", n:"Huehuetenango", img:"f01"}
+];
+const PRENDAS = {huipil:"Huipil", corte:"Corte", faja:"Faja", perraje:"Perraje"};
+const P = [
+ {id:"h00",prenda:"huipil",region:"quiche",n:"Huipil Caminos de Colores",q:2450,unica:true,nuevo:9,real:true,
+  d:"Brocado denso de rombos, zigzags y figuras de casitas sobre fondo oscuro, con remate de algodón blanco. Foto real del taller."},
+ {id:"h01",prenda:"huipil",region:"totonicapan",n:"Huipil Granate",q:1850,nuevo:8,d:"Brocado fino en rojo granate sobre rojo, de cuello cuadrado y caída recta."},
+ {id:"h02",prenda:"huipil",region:"solola",n:"Huipil Algodón Lila",q:1200,nuevo:3,d:"Algodón blanco con pequeños rombos lila y verde, ligero para uso diario."},
+ {id:"h03",prenda:"huipil",region:"quetzaltenango",n:"Huipil Lago Turquesa",q:1650,nuevo:7,d:"Tramas en turquesa y azul con figuras geométricas finas."},
+ {id:"h04",prenda:"huipil",region:"quiche",n:"Huipil Zigzag Fucsia",q:1990,nuevo:10,d:"Zigzags intensos en fucsia, naranja y morado sobre base ciruela."},
+ {id:"h05",prenda:"huipil",region:"totonicapan",n:"Huipil Sol Dorado",q:2800,unica:true,nuevo:6,d:"Pieza ceremonial con rombos dorados y un sol central brocado."},
+ {id:"h06",prenda:"huipil",region:"quetzaltenango",n:"Huipil Rombos Blancos",q:1350,nuevo:2,d:"Fondo blanco con rombos morados repetidos; fresco y versátil."},
+ {id:"h07",prenda:"huipil",region:"quiche",n:"Huipil Noche y Fuego",q:2150,nuevo:5,d:"Base negra con zigzags magenta y naranja que se abren hacia el ruedo."},
+ {id:"h08",prenda:"huipil",region:"solola",n:"Huipil Azul Profundo",q:1750,nuevo:4,d:"Azul índigo y turquesa con grecas y figuras escalonadas."},
+ {id:"c01",prenda:"corte",region:"solola",n:"Corte Jaspe Índigo",q:1600,nuevo:7,d:"Corte envolvente de jaspe en azul índigo, 4 a 5 varas."},
+ {id:"c02",prenda:"corte",region:"quetzaltenango",n:"Corte Rojo de Bandas",q:1750,nuevo:8,d:"Rojo profundo con bandas tejidas en verde, azul y amarillo."},
+ {id:"c03",prenda:"corte",region:"totonicapan",n:"Corte Jaspe Celeste",q:1500,nuevo:4,d:"Jaspe celeste y blanco, ligero y fresco."},
+ {id:"c04",prenda:"corte",region:"quiche",n:"Corte Granate Labrado",q:1900,nuevo:6,d:"Granate con franjas labradas de figuras pequeñas."},
+ {id:"c05",prenda:"corte",region:"huehuetenango",n:"Corte Rojo Liso",q:1300,nuevo:2,d:"Rojo con franjas oscuras, de uso diario."},
+ {id:"f01",prenda:"faja",region:"huehuetenango",n:"Faja Brocada Jardín",q:450,nuevo:9,d:"Faja de brocado con figuras florales y rombos, 2.5 m."},
+ {id:"f02",prenda:"faja",region:"quiche",n:"Faja Grecas",q:520,nuevo:5,d:"Grecas y rombos en colores vivos sobre fondo oscuro."},
+ {id:"f03",prenda:"faja",region:"solola",n:"Faja Turquesa",q:480,nuevo:3,d:"Turquesa con figuras moradas y verdes."},
+ {id:"p01",prenda:"perraje",region:"totonicapan",n:"Perraje Tierra",q:690,nuevo:6,d:"Rayas finas en tonos tierra, con flecos anudados."},
+ {id:"p02",prenda:"perraje",region:"quetzaltenango",n:"Perraje Fiesta",q:750,nuevo:8,d:"Rayas en fucsia, verde y azul con flecos de colores."},
+ {id:"p03",prenda:"perraje",region:"huehuetenango",n:"Perraje Mar",q:690,nuevo:1,d:"Azules y verdes en rayas, con flecos sueltos."}
+];
+const TALLAS = {
+  huipil:[{t:"S",cm:"Ancho 58 · Largo 62",stock:2},{t:"M",cm:"Ancho 64 · Largo 66",stock:4},{t:"L",cm:"Ancho 70 · Largo 70",stock:1},{t:"XL",cm:"Ancho 76 · Largo 72",stock:0}],
+  corte:[{t:"4 varas",cm:"Largo 336 · Alto 90",stock:3},{t:"5 varas",cm:"Largo 420 · Alto 95",stock:2}],
+  faja:[{t:"Única",cm:"Largo 250 · Ancho 9",stock:6}],
+  perraje:[{t:"Única",cm:"180 × 70",stock:5}]
+};
+const ENVIOS = [
+  {id:"gt",n:"Guatemala · Estándar",d:"2 a 4 días hábiles",q:45,pais:"GT"},
+  {id:"gt-exp",n:"Guatemala · Express",d:"Siguiente día hábil en la capital",q:85,pais:"GT"},
+  {id:"intl",n:"Internacional · Estándar",d:"8 a 15 días hábiles",q:380,pais:"X"},
+  {id:"intl-exp",n:"Internacional · Express",d:"3 a 6 días hábiles",q:690,pais:"X"}
+];
+const ENVIO_GRATIS_GT = 1500;
+const byId = id => P.find(p=>p.id===id);
+
+/* ---------- estado ---------- */
+const guardar=(k,v)=>{try{localStorage.setItem("jole-"+k,JSON.stringify(v))}catch(e){}};
+const leer=(k,d)=>{try{const v=localStorage.getItem("jole-"+k);return v?JSON.parse(v):d}catch(e){return d}};
+let moneda = leer("moneda","GTQ");
+let carrito = leer("carrito",[]);        // [{id,talla,cant}]
+let pedido = leer("pedido",{paso:1,email:"",nombre:"",telefono:"",pais:"GT",direccion:"",dir2:"",ciudad:"",region:"",postal:"",envio:"gt",pago:"tarjeta"});
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function dinero(q){ return moneda==="GTQ" ? "Q"+q.toLocaleString("es-GT",{minimumFractionDigits:0}) : "US$"+(q/TC).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function otraMoneda(q){ return moneda==="GTQ" ? "≈ US$"+(q/TC).toFixed(0) : "Q"+q.toLocaleString("es-GT"); }
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("ver"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("ver"),2200); }
+const regionN = id => REGIONES.find(r=>r.id===id)?.n || id;
+
+/* ---------- tarjetas ---------- */
+function tarjeta(p){
+  return `<a class="tarjeta" href="#p/${p.id}">
+    <div class="foto"><img src="img/p/${p.id}.webp" alt="${esc(p.n)}" loading="lazy">
+      ${p.unica?'<span class="chip unica">Pieza única</span>':(p.nuevo>=8?'<span class="chip">Nuevo</span>':'')}
+      <span class="chip-3d" title="Vista 3D disponible">3D</span></div>
+    <div class="meta">${regionN(p.region)} · ${PRENDAS[p.prenda]}</div>
+    <h3>${esc(p.n)}</h3>
+    <div class="precio">${dinero(p.q)}</div></a>`;
+}
+
+/* ---------- inicio ---------- */
+function pintarInicio(){
+  $("#lista-regiones").innerHTML = REGIONES.map(r=>{
+    const n=P.filter(p=>p.region===r.id).length;
+    return `<a class="region" href="#tienda?region=${r.id}"><img src="img/p/${r.img}.webp" alt="" loading="lazy"><span><small>${n} piezas</small>${r.n}</span></a>`;}).join("");
+  $("#destacados").innerHTML = [...P].sort((a,b)=>b.nuevo-a.nuevo).slice(0,4).map(tarjeta).join("");
+}
+
+/* ---------- catálogo ---------- */
+const filtro = {region:new Set(), prenda:new Set(), precio:null, solo3d:false, orden:"rel"};
+const RANGOS=[{id:"a",n:"Hasta Q800",min:0,max:800},{id:"b",n:"Q800 a Q1,800",min:800,max:1800},{id:"c",n:"Más de Q1,800",min:1800,max:1e9}];
+function pintarFiltros(){
+  const cuenta=(fn)=>P.filter(fn).length;
+  $("#f-region").innerHTML = REGIONES.map(r=>`<label><input type="checkbox" data-f="region" value="${r.id}" ${filtro.region.has(r.id)?"checked":""}> ${r.n}<span class="cuenta">${cuenta(p=>p.region===r.id)}</span></label>`).join("");
+  $("#f-prenda").innerHTML = Object.entries(PRENDAS).map(([k,v])=>`<label><input type="checkbox" data-f="prenda" value="${k}" ${filtro.prenda.has(k)?"checked":""}> ${v}s<span class="cuenta">${cuenta(p=>p.prenda===k)}</span></label>`).join("");
+  $("#f-precio").innerHTML = RANGOS.map(r=>`<label><input type="checkbox" data-f="precio" value="${r.id}" ${filtro.precio===r.id?"checked":""}> ${r.n}</label>`).join("");
+}
+function aplicarCatalogo(){
+  let L=P.filter(p=>(!filtro.region.size||filtro.region.has(p.region))&&(!filtro.prenda.size||filtro.prenda.has(p.prenda)));
+  if(filtro.precio){ const r=RANGOS.find(x=>x.id===filtro.precio); L=L.filter(p=>p.q>=r.min&&p.q<r.max); }
+  if(filtro.orden==="asc") L.sort((a,b)=>a.q-b.q); else if(filtro.orden==="desc") L.sort((a,b)=>b.q-a.q); else if(filtro.orden==="nuevo") L.sort((a,b)=>b.nuevo-a.nuevo);
+  $("#rejilla").innerHTML=L.map(tarjeta).join(""); $("#vacio").hidden=L.length>0;
+  const titulo = filtro.prenda.size===1 ? PRENDAS[[...filtro.prenda][0]]+"s" : "Toda la colección";
+  const reg = filtro.region.size===1 ? " de "+regionN([...filtro.region][0]) : "";
+  $("#t-catalogo").textContent = titulo+reg;
+  $("#resumen-cat").textContent = `${L.length} ${L.length===1?"pieza":"piezas"} · todas con vista 3D`;
+  const chips=[...[...filtro.region].map(v=>["region",v,regionN(v)]),...[...filtro.prenda].map(v=>["prenda",v,PRENDAS[v]+"s"]),...(filtro.precio?[["precio",filtro.precio,RANGOS.find(r=>r.id===filtro.precio).n]]:[])];
+  $("#activos").innerHTML = chips.map(([f,v,n])=>`<button type="button" data-quitar="${f}" data-v="${v}" aria-label="Quitar filtro ${esc(n)}">${esc(n)} ×</button>`).join("");
+}
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.f){ if(t.dataset.f==="precio"){ filtro.precio=t.checked?t.value:null; pintarFiltros(); } else { t.checked?filtro[t.dataset.f].add(t.value):filtro[t.dataset.f].delete(t.value); } aplicarCatalogo(); }
+  if(t.id==="orden"){ filtro.orden=t.value; aplicarCatalogo(); }
+});
+document.addEventListener("click",e=>{
+  const q=e.target.closest("[data-quitar]");
+  if(q){ const f=q.dataset.quitar; if(f==="precio") filtro.precio=null; else filtro[f].delete(q.dataset.v); pintarFiltros(); aplicarCatalogo(); }
+});
+$("#limpiar").onclick=()=>{filtro.region.clear();filtro.prenda.clear();filtro.precio=null;pintarFiltros();aplicarCatalogo();};
+$("#ver-filtros").onclick=()=>$("#filtros").classList.add("abierto");
+$("#cerrar-filtros").onclick=()=>$("#filtros").classList.remove("abierto");
+
+/* ---------- ficha de producto ---------- */
+let visor=null;
+function pintarFicha(id){
+  const p=byId(id); if(!p){ location.hash="#tienda"; return; }
+  const tallas=TALLAS[p.prenda]; const prim=tallas.find(t=>t.stock>0);
+  const rel=P.filter(x=>x.id!==p.id&&(x.region===p.region||x.prenda===p.prenda)).slice(0,4);
+  $("#ficha").innerHTML=`
+  <div class="migas"><a href="#inicio">Inicio</a> / <a href="#tienda?prenda=${p.prenda}">${PRENDAS[p.prenda]}s</a> / <a href="#tienda?region=${p.region}">${regionN(p.region)}</a></div>
+  <div class="ficha">
+    <div class="visor">
+      <div class="modo" role="group" aria-label="Modo de vista">
+        <button type="button" data-modo="3d" aria-pressed="true">Girar en 3D</button>
+        <button type="button" data-modo="foto" aria-pressed="false">Fotos</button>
+      </div>
+      <div class="lienzo" id="lienzo"><div class="cargando-3d" id="cargando">Preparando la vista 3D…</div><div class="ayuda-3d" id="ayuda">Arrastra para girar · rueda o pellizca para acercar</div></div>
+      <div class="miniaturas" id="miniaturas" hidden><button type="button" aria-pressed="true"><img src="img/p/${p.id}.webp" alt="Vista frontal"></button></div>
+    </div>
+    <div class="info">
+      <div class="eti">${regionN(p.region)} · ${PRENDAS[p.prenda]}${p.real?' · <span style="color:var(--ok)">Foto real</span>':' · <span class="ph">Ejemplo</span>'}</div>
+      <h1>${esc(p.n)}</h1>
+      <div><span class="precio precio-grande">${dinero(p.q)}</span><span class="aprox">${otraMoneda(p.q)}</span></div>
+      <p style="color:var(--suave);margin:14px 0 0">${esc(p.d)}</p>
+      <div class="bloque">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:500">Talla: <span id="talla-sel">${prim?prim.t:"Agotada"}</span></span><button class="link" type="button" id="ver-medidas">Guía de medidas</button></div>
+        <div class="tallas" role="group" aria-label="Elegir talla">
+          ${tallas.map(t=>`<button type="button" data-talla="${esc(t.t)}" aria-pressed="${prim&&t.t===prim.t}" ${t.stock?"":"disabled"} aria-label="${esc(t.t)}, ${t.cm} cm${t.stock?"":", agotada"}">${esc(t.t)}<small>${t.stock?(t.stock<=2?"Quedan "+t.stock:t.cm.split("·")[0]):"Agotada"}</small></button>`).join("")}
+        </div>
+        <p style="font-size:13px;color:var(--suave);margin:10px 0 0" id="talla-cm">${prim?prim.cm+" cm":""}</p>
+      </div>
+      <div style="display:grid;gap:10px">
+        <button class="btn ancho-completo" type="button" id="agregar" ${prim?"":"disabled"}>Agregar al carrito · ${dinero(p.q)}</button>
+        <ul class="lista-check" style="margin-top:6px">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4 10-10"/></svg>Envío en Guatemala ${dinero(45)}, gratis desde ${dinero(ENVIO_GRATIS_GT)} · Internacional desde ${dinero(380)}</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4 10-10"/></svg>Cambio de talla gratis en 30 días</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 4 4 10-10"/></svg>Tejido a mano: cada pieza varía un poco en color y figura</li>
+        </ul>
+      </div>
+      <div class="bloque tejedora"><div class="avatar">T</div><div><b style="color:var(--tinta);font-weight:500">Tejido por <span class="ph">[nombre de la tejedora]</span></b><br>${regionN(p.region)} · telar de cintura · <span class="ph">[semanas de trabajo]</span></div></div>
+      <details open><summary>Detalles de la pieza</summary><div>${esc(p.d)} Algodón <span class="ph">[composición exacta]</span>. Lavar a mano en agua fría, secar a la sombra.</div></details>
+      <details id="det-medidas"><summary>Guía de medidas</summary><div><table class="medidas"><thead><tr><th>Talla</th><th>Medidas (cm)</th><th>Pulgadas</th></tr></thead><tbody>
+        ${tallas.map(t=>`<tr><td>${esc(t.t)}</td><td>${esc(t.cm)}</td><td>${t.cm.replace(/\d+/g,n=>Math.round(n/2.54))}</td></tr>`).join("")}</tbody></table>
+        <p style="margin:10px 0 0">¿Entre dos tallas? Escríbenos con tus medidas y te ayudamos a elegir.</p></div></details>
+      <details><summary>Envíos y cambios</summary><div>Guatemala: estándar 2 a 4 días hábiles, express al día siguiente en la capital. Internacional: 8 a 15 días hábiles (express 3 a 6). Los impuestos de importación del país de destino corren por cuenta de quien compra. <span class="ph">[Confirmar políticas]</span></div></details>
+      <details><summary>Opiniones</summary><div>Esta pieza todavía no tiene opiniones. Las reseñas reales de clientes aparecerán aquí, con su comentario sobre la talla.</div></details>
+    </div>
+  </div>
+  <section class="seccion" style="padding-top:24px"><div class="cab-seccion"><h2 style="font-size:clamp(30px,3.4vw,42px)">También de ${regionN(p.region)}</h2></div><div class="rejilla">${rel.map(tarjeta).join("")}</div></section>`;
+
+  let tallaSel=prim?prim.t:null;
+  $("#ficha").querySelectorAll("[data-talla]").forEach(b=>b.onclick=()=>{
+    tallaSel=b.dataset.talla; $("#ficha").querySelectorAll("[data-talla]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    $("#talla-sel").textContent=tallaSel; $("#talla-cm").textContent=tallas.find(t=>t.t===tallaSel).cm+" cm"; });
+  $("#ver-medidas").onclick=()=>{ const d=$("#det-medidas"); d.open=true; d.scrollIntoView({behavior:"smooth",block:"center"}); };
+  $("#agregar").onclick=()=>{ agregar(p.id,tallaSel); };
+  $("#ficha").querySelectorAll("[data-modo]").forEach(b=>b.onclick=()=>{
+    $("#ficha").querySelectorAll("[data-modo]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    const lz=$("#lienzo");
+    if(b.dataset.modo==="foto"){ visor?.destruir(); visor=null; lz.innerHTML=`<img class="principal" src="img/p/${p.id}.webp" alt="${esc(p.n)}">`; $("#miniaturas").hidden=false; }
+    else { $("#miniaturas").hidden=true; lz.innerHTML='<div class="cargando-3d" id="cargando">Preparando la vista 3D…</div><div class="ayuda-3d" id="ayuda">Arrastra para girar · rueda o pellizca para acercar</div>'; montar3D(p); }
+  });
+  montar3D(p);
+}
+
+/* ---------- visor 3D ---------- */
+let THREE_mod=null, Orbit=null;
+async function cargarThree(){ if(!THREE_mod){ THREE_mod=await import("three"); Orbit=(await import("three/addons/controls/OrbitControls.js")).OrbitControls; } return THREE_mod; }
+async function montar3D(p){
+  visor?.destruir(); visor=null;
+  const lz=$("#lienzo");
+  let THREE; try{ THREE=await cargarThree(); }catch(e){ lz.innerHTML=`<img class="principal" src="img/p/${p.id}.webp" alt="${esc(p.n)}">`; return; }
+  if(!document.body.contains(lz)) return;
+  const W=lz.clientWidth, H=lz.clientHeight;
+  const ren=new THREE.WebGLRenderer({antialias:true,alpha:true}); ren.setPixelRatio(Math.min(devicePixelRatio,2)); ren.setSize(W,H);
+  ren.outputColorSpace=THREE.SRGBColorSpace;
+  const esc3=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(32,W/H,0.1,50); cam.position.set(0,0.15,5.2);
+  esc3.add(new THREE.HemisphereLight(0xfffaf2,0xd9c7b5,1.6));
+  const sol=new THREE.DirectionalLight(0xffffff,1.3); sol.position.set(2.5,3,4); esc3.add(sol);
+  const tras=new THREE.DirectionalLight(0xffe6d6,.6); tras.position.set(-3,1,-3); esc3.add(tras);
+  const tex=await new THREE.TextureLoader().loadAsync(`img/tex/${p.id}.jpg`); tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=8;
+  const g=new THREE.Group(); esc3.add(g);
+  const tela=(t,rx=1,ry=1)=>{ const tt=t.clone(); tt.wrapS=tt.wrapT=THREE.RepeatWrapping; tt.repeat.set(rx,ry); tt.needsUpdate=true; return new THREE.MeshStandardMaterial({map:tt,roughness:.92,side:THREE.DoubleSide}); };
+  const crema=new THREE.MeshStandardMaterial({color:0xefe6da,roughness:.95});
+  // maniquí
+  const poste=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.4,16),new THREE.MeshStandardMaterial({color:0xb79c7f,roughness:.6})); poste.position.y=-1.55; g.add(poste);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.35,.4,.06,40),poste.material); base.position.y=-2.25; g.add(base);
+  if(p.prenda==="huipil"){
+    const cuello=new THREE.Mesh(new THREE.CylinderGeometry(.16,.2,.32,32),crema); cuello.position.y=1.2; g.add(cuello);
+    // cuerpo: tubo elíptico con la tela del huipil, ensanchado en hombros
+    const geo=new THREE.CylinderGeometry(1,1,1,96,24,true,-Math.PI/2,Math.PI*2);
+    const pos=geo.attributes.position;
+    for(let i=0;i<pos.count;i++){ const y=pos.getY(i)+.5; const x=pos.getX(i), z=pos.getZ(i);
+      const hombro=1+.22*Math.pow(y,6); pos.setX(i,x*.86*hombro); pos.setZ(i,z*.48*(1+.08*Math.pow(y,4))); pos.setY(i,(y-.5)*1.9+.15); }
+    geo.computeVertexNormals();
+    const cuerpo=new THREE.Mesh(geo,tela(tex,2,1)); g.add(cuerpo);
+    // mangas cortas
+    [-1,1].forEach(s=>{ const m=new THREE.Mesh(new THREE.CylinderGeometry(.24,.32,.5,32,1,true),tela(tex,1,.5)); m.rotation.z=s*1.25; m.position.set(s*1.02,.86,0); g.add(m); });
+    const tapa=new THREE.Mesh(new THREE.CircleGeometry(1,64),tela(tex,1,1)); tapa.scale.set(.86*1.22,.48*1.08,1); tapa.rotation.x=-Math.PI/2; tapa.position.y=1.1; g.add(tapa);
+  } else if(p.prenda==="corte"){
+    const cintura=new THREE.Mesh(new THREE.CylinderGeometry(.42,.46,.3,40),crema); cintura.position.y=1.15; g.add(cintura);
+    const geo=new THREE.CylinderGeometry(.5,.66,2.3,96,8,true,-Math.PI/2,Math.PI*2); const pos=geo.attributes.position;
+    for(let i=0;i<pos.count;i++){ const a=Math.atan2(pos.getZ(i),pos.getX(i)); const y=pos.getY(i); const ond=1+.035*Math.sin(a*9)*(1-(y+1.15)/2.3); pos.setX(i,pos.getX(i)*ond); pos.setZ(i,pos.getZ(i)*ond*.82); }
+    geo.computeVertexNormals(); const m=new THREE.Mesh(geo,tela(tex,2,1)); m.position.y=-.05; g.add(m);
+    const faja=new THREE.Mesh(new THREE.CylinderGeometry(.51,.51,.16,64,1,true),new THREE.MeshStandardMaterial({color:0x5e1e43,roughness:.9,side:THREE.DoubleSide})); faja.position.y=1.0; faja.scale.z=.82; g.add(faja);
+    poste.position.y=-1.9; poste.scale.y=.5;
+  } else if(p.prenda==="faja"){
+    // faja enrollada en espiral
+    const curva=new THREE.CatmullRomCurve3(Array.from({length:120},(_,i)=>{ const t=i/119, a=t*Math.PI*5; const r=.55+t*.15; return new THREE.Vector3(Math.cos(a)*r, -0.9+t*1.9, Math.sin(a)*r*.75); }));
+    const n=300, w=.24, pts=curva.getSpacedPoints(n), geo=new THREE.BufferGeometry(), v=[], uv=[], idx=[];
+    pts.forEach((pt,i)=>{ v.push(pt.x,pt.y-w/2,pt.z, pt.x,pt.y+w/2,pt.z); uv.push(i/n*8,0, i/n*8,1); if(i<n){ const a=i*2; idx.push(a,a+2,a+1, a+1,a+2,a+3); } });
+    geo.setAttribute("position",new THREE.Float32BufferAttribute(v,3)); geo.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2)); geo.setIndex(idx); geo.computeVertexNormals();
+    const tt=tex.clone(); tt.wrapS=THREE.RepeatWrapping; tt.needsUpdate=true; g.add(new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:tt,roughness:.9,side:THREE.DoubleSide})));
+    poste.visible=false; base.position.y=-1.15;
+  } else {
+    // perraje: paño con ondas, colgado
+    const geo=new THREE.PlaneGeometry(2.6,1.9,80,60); const pos=geo.attributes.position;
+    for(let i=0;i<pos.count;i++){ const x=pos.getX(i), y=pos.getY(i); pos.setZ(i,.16*Math.sin(x*3.2)+.08*Math.sin(y*2.4+x)); }
+    geo.computeVertexNormals(); const m=new THREE.Mesh(geo,tela(tex,1.2,1)); m.position.y=.2; g.add(m);
+    const vara=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,3,16),poste.material); vara.rotation.z=Math.PI/2; vara.position.y=1.17; g.add(vara);
+    poste.visible=false; base.visible=false;
+  }
+  g.position.y=.25;
+  lz.prepend(ren.domElement); $("#cargando")?.remove();
+  const ctl=new Orbit(cam,ren.domElement); ctl.enableDamping=true; ctl.dampingFactor=.08; ctl.enablePan=false; ctl.minDistance=2.6; ctl.maxDistance=7; ctl.minPolarAngle=.6; ctl.maxPolarAngle=2.2; ctl.target.set(0,.2,0);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  ctl.autoRotate=!reduce; ctl.autoRotateSpeed=1.2;
+  let vivo=true;
+  ren.domElement.addEventListener("pointerdown",()=>{ ctl.autoRotate=false; const a=$("#ayuda"); if(a) a.style.opacity=0; });
+  const ro=new ResizeObserver(()=>{ const w=lz.clientWidth,h=lz.clientHeight; if(!w||!h) return; ren.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix(); }); ro.observe(lz);
+  (function loop(){ if(!vivo) return; ctl.update(); ren.render(esc3,cam); requestAnimationFrame(loop); })();
+  visor={destruir(){ vivo=false; ro.disconnect(); ctl.dispose(); ren.dispose(); ren.domElement.remove(); }};
+}
+
+/* ---------- carrito ---------- */
+const subtotal=()=>carrito.reduce((s,l)=>s+byId(l.id).q*l.cant,0);
+function agregar(id,talla){
+  const l=carrito.find(x=>x.id===id&&x.talla===talla); if(l) l.cant++; else carrito.push({id,talla,cant:1});
+  guardar("carrito",carrito); pintarCarrito(); abrirCarrito();
+}
+function pintarCarrito(){
+  const n=carrito.reduce((s,l)=>s+l.cant,0); const b=$("#cuenta-carrito"); b.hidden=!n; b.textContent=n;
+  if(!carrito.length){ $("#lineas-carrito").innerHTML=`<div class="vacio">Tu carrito está vacío.<br><br><a class="btn sec" href="#tienda" data-cerrar>Ver la colección</a></div>`; $("#pie-carrito").innerHTML=""; return; }
+  $("#lineas-carrito").innerHTML=carrito.map((l,i)=>{ const p=byId(l.id); return `<div class="linea-carrito"><img src="img/p/${p.id}.webp" alt=""><div><h4>${esc(p.n)}</h4><div style="font-size:13px;color:var(--suave)">${regionN(p.region)} · Talla ${esc(l.talla)}</div>
+    <div class="cantidad"><button type="button" data-menos="${i}" aria-label="Quitar uno">−</button><span>${l.cant}</span><button type="button" data-mas="${i}" aria-label="Agregar uno">+</button></div><br><button class="quitar" type="button" data-quitar-l="${i}">Eliminar</button></div><div class="precio">${dinero(p.q*l.cant)}</div></div>`; }).join("");
+  const st=subtotal(), falta=Math.max(0,ENVIO_GRATIS_GT-st);
+  $("#pie-carrito").innerHTML=`
+    <div class="progreso-envio">${falta?`Te faltan <b>${dinero(falta)}</b> para envío gratis en Guatemala`:"Tienes envío gratis en Guatemala"}<div class="barra-p"><i style="width:${Math.min(100,st/ENVIO_GRATIS_GT*100)}%"></i></div></div>
+    <div class="fila-total"><span>Subtotal</span><span class="precio">${dinero(st)}</span></div>
+    <div class="fila-total"><span>Envío estimado</span><span class="precio">${falta?dinero(45):"Gratis"} <small style="color:var(--suave)">(Guatemala)</small></span></div>
+    <div class="fila-total grande"><span>Total estimado</span><span class="precio">${dinero(st+(falta?45:0))}</span></div>
+    <a class="btn ancho-completo" href="#checkout" data-cerrar>Finalizar compra</a>
+    <div class="pagos"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>PAYPAL</span><span>TRANSFERENCIA</span></div>`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-mas],[data-menos],[data-quitar-l],[data-cerrar]"); if(!t) return;
+  if(t.dataset.mas!==undefined) carrito[+t.dataset.mas].cant++;
+  if(t.dataset.menos!==undefined){ const l=carrito[+t.dataset.menos]; l.cant--; if(!l.cant) carrito.splice(+t.dataset.menos,1); }
+  if(t.dataset.quitarL!==undefined) carrito.splice(+t.dataset.quitarL,1);
+  if(t.dataset.cerrar!==undefined) cerrarCarrito();
+  guardar("carrito",carrito); pintarCarrito(); if(location.hash.startsWith("#checkout")) pintarCheckout();
+});
+function abrirCarrito(){ $("#cajon").classList.add("abierto"); $("#velo").classList.add("abierto"); $("#cajon").setAttribute("aria-hidden","false"); $("#cerrar-carrito").focus(); }
+function cerrarCarrito(){ $("#cajon").classList.remove("abierto"); $("#velo").classList.remove("abierto"); $("#cajon").setAttribute("aria-hidden","true"); }
+$("#abrir-carrito").onclick=abrirCarrito; $("#cerrar-carrito").onclick=cerrarCarrito; $("#velo").onclick=cerrarCarrito; document.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarCarrito(); });
+addEventListener("keydown",e=>{ if(e.key==="Escape") cerrarCarrito(); });
+
+/* ---------- checkout ---------- */
+const PASOS=["Contacto","Envío","Pago","Revisión"];
+const envioActual=()=>{ const e=ENVIOS.find(x=>x.id===pedido.envio)||ENVIOS[0]; const gratis=e.id==="gt"&&subtotal()>=ENVIO_GRATIS_GT; return {...e,costo:gratis?0:e.q}; };
+function pintarResumen(){
+  const st=subtotal(), en=envioActual();
+  $("#resumen").innerHTML=`<h3>Tu pedido</h3><div class="lineas">${carrito.map(l=>{const p=byId(l.id);return `<div class="mini"><img src="img/p/${p.id}.webp" alt=""><div>${esc(p.n)}<br><small style="color:var(--suave)">Talla ${esc(l.talla)} · ${l.cant} ${l.cant>1?"unidades":"unidad"}</small></div><span class="precio">${dinero(p.q*l.cant)}</span></div>`}).join("")}</div>
+    <div class="sep"><div class="fila-total"><span>Subtotal</span><span class="precio">${dinero(st)}</span></div>
+    <div class="fila-total"><span>Envío · ${esc(en.n.split(" · ")[1])}</span><span class="precio">${en.costo?dinero(en.costo):"Gratis"}</span></div>
+    ${pedido.pais!=="GT"?`<div style="font-size:13px;color:var(--suave)">Los impuestos de importación los cobra el país de destino al recibir.</div>`:""}</div>
+    <div class="sep"><div class="fila-total grande"><span>Total</span><span class="precio">${dinero(st+en.costo)}</span></div><div style="font-size:12px;color:var(--suave)">${moneda==="USD"?"Se cobra en quetzales: Q"+(st+en.costo).toLocaleString("es-GT"):"≈ US$"+((st+en.costo)/TC).toFixed(2)+" · tipo de cambio de ejemplo"}</div></div>
+    <a class="link" href="#tienda" style="display:inline-block;margin-top:10px">Seguir comprando</a>`;
+}
+function campo(id,label,opts={}){ const v=esc(pedido[id]??""); const req=opts.opcional?' <small>(opcional)</small>':'';
+  return `<div class="campo ${opts.completo?"completo":""}"><label for="c-${id}">${label}${req}</label><input id="c-${id}" name="${id}" value="${v}" type="${opts.type||"text"}" autocomplete="${opts.ac||"on"}" ${opts.im?`inputmode="${opts.im}"`:""} ${opts.opcional?"":"required"} autocapitalize="${opts.cap||"words"}" spellcheck="false"><div class="error-campo" id="e-${id}" hidden></div></div>`; }
+function pintarCheckout(){
+  if(!carrito.length){ $("#form-checkout").innerHTML=`<div class="vacio">Tu carrito está vacío.<br><br><a class="btn" href="#tienda">Ver la colección</a></div>`; $("#pasos").innerHTML=""; $("#resumen").innerHTML=""; return; }
+  const k=pedido.paso;
+  $("#pasos").innerHTML=PASOS.map((n,i)=>{ const j=i+1; return `<li class="${j<k?"hecho":j===k?"actual":""}">${j<k?`<button type="button" data-ir="${j}" aria-label="Volver a ${n}"><span class="n">${j}.</span> <span class="t">${n}</span></button>`:`<span class="n">${j}.</span> <span class="t">${n}</span>`}</li>`; }).join("");
+  const F=$("#form-checkout"); let h="";
+  if(k===1){ h=`<div class="paso"><h2>¿A dónde te avisamos?</h2>
+    <div class="invitado"><span><b style="font-weight:500">Compra como invitada o invitado.</b> No necesitas crear una cuenta; podrás hacerlo al final si quieres.</span></div>
+    <div class="campos">${campo("email","Correo electrónico",{type:"email",ac:"email",im:"email",cap:"off",completo:true})}${campo("nombre","Nombre completo",{ac:"name"})}${campo("telefono","Teléfono o WhatsApp",{type:"tel",ac:"tel",im:"tel",opcional:true,cap:"off"})}</div>
+    <div class="nav-paso"><a class="link" href="#tienda">← Volver a la tienda</a><button class="btn" type="submit">Continuar a envío</button></div></div>`; }
+  if(k===2){ const paises=[["GT","Guatemala"],["US","Estados Unidos"],["MX","México"],["CA","Canadá"],["ES","España"],["X","Otro país"]];
+    const loc=pedido.pais==="GT"; h=`<div class="paso"><h2>Envío</h2>
+    <div class="campos">
+      <div class="campo completo"><label for="c-pais">País</label><select id="c-pais" name="pais" autocomplete="country">${paises.map(([c,n])=>`<option value="${c}" ${pedido.pais===c?"selected":""}>${n}</option>`).join("")}</select></div>
+      ${campo("direccion","Dirección",{ac:"address-line1",completo:true})}
+      <div style="grid-column:1/-1" id="dir2-c" ${pedido.dir2?"":"hidden"}>${campo("dir2","Apartamento, casa, referencia",{ac:"address-line2",opcional:true})}</div>
+      <div class="completo"><button class="link" type="button" id="ver-dir2" ${pedido.dir2?"hidden":""}>+ Agregar apartamento o referencia</button></div>
+      ${campo("ciudad",loc?"Municipio o ciudad":"Ciudad",{ac:"address-level2"})}${campo("region",loc?"Departamento":"Estado o provincia",{ac:"address-level1"})}
+      ${loc?"":campo("postal","Código postal",{ac:"postal-code",cap:"characters"})}
+    </div>
+    <h3 style="font-family:var(--texto);font-style:normal;font-size:16px;font-weight:500;color:var(--tinta);margin:24px 0 10px">Método de envío</h3>
+    <div class="opciones">${ENVIOS.filter(e=>loc?e.pais==="GT":e.pais==="X").map(e=>{ const gratis=e.id==="gt"&&subtotal()>=ENVIO_GRATIS_GT; return `<label class="opcion"><input type="radio" name="envio" value="${e.id}" ${pedido.envio===e.id?"checked":""}><span class="t"><b>${e.n}</b><small>${e.d}</small></span><span class="precio">${gratis?"Gratis":dinero(e.q)}</span></label>`; }).join("")}</div>
+    <div class="nav-paso"><button class="link" type="button" data-ir="1">← Contacto</button><button class="btn" type="submit">Continuar a pago</button></div></div>`; }
+  if(k===3){ h=`<div class="paso"><h2>Pago</h2>
+    <div class="opciones">
+      <label class="opcion"><input type="radio" name="pago" value="tarjeta" ${pedido.pago==="tarjeta"?"checked":""}><span class="t"><b>Tarjeta de crédito o débito</b><small>Visa, Mastercard o American Express. Escribes los datos de la tarjeta en la página segura de la pasarela, no en Jolé.</small></span></label>
+      <label class="opcion"><input type="radio" name="pago" value="paypal" ${pedido.pago==="paypal"?"checked":""}><span class="t"><b>PayPal</b><small>Te llevamos a PayPal para pagar y luego vuelves aquí.</small></span></label>
+      <label class="opcion"><input type="radio" name="pago" value="transferencia" ${pedido.pago==="transferencia"?"checked":""}><span class="t"><b>Transferencia o depósito</b><small>Solo en Guatemala. Te enviamos los datos de la cuenta por correo; el pedido sale al confirmar el pago.</small></span></label>
+    </div>
+    <p class="aviso-demo" style="margin-top:16px">Modo demostración: este paso no conecta con ninguna pasarela ni guarda datos de pago. En la tienda real aquí iría la pasarela que elijas <span class="ph">[por ejemplo, la de tu banco, Recurrente, Stripe o PayPal]</span>.</p>
+    <div class="nav-paso"><button class="link" type="button" data-ir="2">← Envío</button><button class="btn" type="submit">Revisar pedido</button></div></div>`; }
+  if(k===4){ const en=envioActual(); const pagoN={tarjeta:"Tarjeta (pasarela segura)",paypal:"PayPal",transferencia:"Transferencia o depósito"}[pedido.pago];
+    const etq={tarjeta:"Pagar con tarjeta",paypal:"Continuar a PayPal",transferencia:"Confirmar pedido"}[pedido.pago];
+    h=`<div class="paso revision"><h2>Revisa tu pedido</h2>
+    <dl><dt>Contacto</dt><dd>${esc(pedido.nombre)}<br>${esc(pedido.email)}${pedido.telefono?"<br>"+esc(pedido.telefono):""}</dd><dd><button class="link" type="button" data-ir="1">Cambiar</button></dd>
+    <dt>Enviar a</dt><dd>${esc(pedido.direccion)}${pedido.dir2?", "+esc(pedido.dir2):""}<br>${esc(pedido.ciudad)}, ${esc(pedido.region)}${pedido.postal?" "+esc(pedido.postal):""}<br>${esc($("#c-pais")?.selectedOptions?.[0]?.text||({GT:"Guatemala",US:"Estados Unidos",MX:"México",CA:"Canadá",ES:"España",X:"Otro país"}[pedido.pais]))}</dd><dd><button class="link" type="button" data-ir="2">Cambiar</button></dd>
+    <dt>Envío</dt><dd>${esc(en.n)} · ${esc(en.d)}</dd><dd><button class="link" type="button" data-ir="2">Cambiar</button></dd>
+    <dt>Pago</dt><dd>${pagoN}</dd><dd><button class="link" type="button" data-ir="3">Cambiar</button></dd></dl>
+    <div class="nav-paso"><button class="link" type="button" data-ir="3">← Pago</button><button class="btn" type="submit">${etq} · ${dinero(subtotal()+en.costo)}</button></div>
+    <p style="font-size:13px;color:var(--suave);margin-top:12px">Al confirmar aceptas las <span class="ph">[condiciones de venta]</span>. Demostración: no se realizará ningún cobro.</p></div>`; }
+  F.innerHTML=h; pintarResumen();
+  F.querySelector("#ver-dir2")?.addEventListener("click",ev=>{ $("#dir2-c").hidden=false; ev.target.hidden=true; $("#c-dir2").focus(); });
+  F.querySelector("#c-pais")?.addEventListener("change",ev=>{ guardarCampos(); pedido.pais=ev.target.value; pedido.envio=pedido.pais==="GT"?"gt":"intl"; guardar("pedido",pedido); pintarCheckout(); });
+  F.querySelectorAll("input[name=envio],input[name=pago]").forEach(r=>r.addEventListener("change",()=>{ pedido[r.name]=r.value; guardar("pedido",pedido); pintarResumen(); }));
+  F.querySelectorAll("input[required]").forEach(i=>i.addEventListener("blur",()=>validar(i)));
+}
+const MSG={email:"Escribe un correo como nombre@ejemplo.com",nombre:"Escribe tu nombre y apellido",direccion:"Escribe la calle, avenida o número de casa",ciudad:"Escribe la ciudad o municipio",region:"Escribe el departamento o estado",postal:"Escribe el código postal"};
+function validar(i){ let ok=i.value.trim().length>0; if(i.name==="email") ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(i.value.trim()); if(i.name==="nombre") ok=i.value.trim().split(/\s+/).length>=2;
+  const e=$("#e-"+i.name); i.setAttribute("aria-invalid",!ok); if(e){ e.hidden=ok; e.textContent=ok?"":MSG[i.name]||"Completa este campo"; } return ok; }
+function guardarCampos(){ $("#form-checkout").querySelectorAll("input[name]:not([type=radio]),select[name]").forEach(i=>pedido[i.name]=i.value.trim()); guardar("pedido",pedido); }
+$("#form-checkout").addEventListener("submit",e=>{
+  e.preventDefault(); guardarCampos();
+  const malos=[...e.target.querySelectorAll("input[required]")].filter(i=>!validar(i));
+  if(malos.length){ malos[0].focus(); malos[0].scrollIntoView({block:"center",behavior:"smooth"}); return; }
+  if(pedido.paso<4){ pedido.paso++; guardar("pedido",pedido); pintarCheckout(); scrollTo({top:0,behavior:"smooth"}); return; }
+  const num="JL-"+Date.now().toString().slice(-6); const total=subtotal()+envioActual().costo;
+  const resumen={num,total,email:pedido.email,nombre:pedido.nombre,pago:pedido.pago,envio:envioActual()};
+  carrito=[]; guardar("carrito",carrito); pedido.paso=1; guardar("pedido",pedido); pintarCarrito();
+  guardar("ultimo",resumen); location.hash="#gracias";
+});
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-ir]"); if(!b) return; guardarCampos(); pedido.paso=+b.dataset.ir; guardar("pedido",pedido); pintarCheckout(); });
+
+function pintarGracias(){
+  const r=leer("ultimo",null);
+  $("#gracias").innerHTML = r ? `<img class="sello-c" src="img/sello.webp" alt=""><div class="eti" style="margin-top:22px">Pedido ${esc(r.num)}</div><h1>Gracias, ${esc(r.nombre.split(" ")[0])}</h1>
+    <p style="color:var(--suave)">Te enviamos la confirmación a <b>${esc(r.email)}</b>. ${r.pago==="transferencia"?"Ahí van también los datos para la transferencia; tu pedido sale en cuanto se confirme el pago.":"Te avisaremos cuando tu pedido salga, con su número de guía."}</p>
+    <p style="color:var(--suave)">Entrega estimada: ${esc(r.envio.d)} · Total ${dinero(r.total)}</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px"><a class="btn" href="#tienda">Seguir comprando</a><button class="btn sec" type="button" onclick="this.textContent='Opción de cuenta: disponible en la tienda real'">Crear cuenta para seguir el pedido</button></div>
+    <p class="aviso-demo" style="margin-top:28px">Demostración: no se envió ningún correo ni se realizó ningún cobro.</p>`
+  : `<h1>Aún no hay pedidos</h1><a class="btn" href="#tienda">Ver la colección</a>`;
+}
+
+/* ---------- moneda ---------- */
+document.querySelectorAll("[data-moneda]").forEach(b=>b.onclick=()=>{ moneda=b.dataset.moneda; guardar("moneda",moneda); document.querySelectorAll("[data-moneda]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.moneda===moneda)); ruta(); pintarCarrito(); });
+document.querySelectorAll("[data-moneda]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.moneda===moneda));
+
+/* ---------- video ---------- */
+const vid=$("#video-hero"), pausa=$("#pausa-hero");
+if(matchMedia("(prefers-reduced-motion: reduce)").matches){ vid.removeAttribute("autoplay"); vid.pause(); pausa.textContent="▶"; }
+pausa.onclick=()=>{ if(vid.paused){ vid.play().catch(()=>{}); pausa.textContent="❚❚"; pausa.setAttribute("aria-label","Pausar el video"); } else { vid.pause(); pausa.textContent="▶"; pausa.setAttribute("aria-label","Reproducir el video"); } };
+
+/* ---------- rutas ---------- */
+function mostrar(id){ document.querySelectorAll(".vista").forEach(v=>v.classList.toggle("activa",v.id===id)); document.body.classList.toggle("en-checkout",id==="v-checkout"); }
+function ruta(){
+  cerrarCarrito(); $("#filtros")?.classList.remove("abierto");
+  const h=decodeURIComponent(location.hash.slice(1)||"inicio"); const [base,qs]=h.split("?");
+  if(base!=="producto") { visor?.destruir(); visor=null; }
+  document.querySelectorAll("nav.principal a").forEach(a=>a.removeAttribute("aria-current"));
+  if(base==="inicio"||base==="regiones"||base===""){ mostrar("v-inicio"); pintarInicio(); if(base==="regiones") setTimeout(()=>$("#regiones").scrollIntoView({behavior:"smooth"}),30); return; }
+  if(base==="tienda"){ mostrar("v-tienda"); const ps=new URLSearchParams(qs||"");
+    if(ps.has("prenda")||ps.has("region")){ filtro.region.clear(); filtro.prenda.clear(); filtro.precio=null; ps.get("prenda")&&filtro.prenda.add(ps.get("prenda")); ps.get("region")&&filtro.region.add(ps.get("region")); }
+    pintarFiltros(); aplicarCatalogo(); document.querySelector(`nav.principal a[data-ruta="${ps.get("prenda")||"tienda"}"]`)?.setAttribute("aria-current","page"); scrollTo({top:0,behavior:"instant"}); return; }
+  if(base.startsWith("p/")){ mostrar("v-producto"); pintarFicha(base.slice(2)); scrollTo({top:0,behavior:"instant"}); return; }
+  if(base==="checkout"){ mostrar("v-checkout"); pintarCheckout(); scrollTo({top:0,behavior:"instant"}); return; }
+  if(base==="gracias"){ mostrar("v-gracias"); pintarGracias(); scrollTo({top:0,behavior:"instant"}); return; }
+  mostrar("v-inicio"); pintarInicio();
+}
+addEventListener("hashchange",ruta);
+pintarCarrito(); ruta();
+window.__jole={agregar,P};
+</script>
+
+</body></html>
