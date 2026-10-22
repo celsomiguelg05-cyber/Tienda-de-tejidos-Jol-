@@ -6,8 +6,8 @@
 @font-face{font-family:"Jost";src:url("Jost.ttf") format("truetype");font-weight:100 900;font-display:swap}
 @font-face{font-family:"Cormorant Garamond";src:url("CormorantGaramond-Italic.ttf") format("truetype");font-weight:300 700;font-style:italic;font-display:swap}
 :root{
-  --papel:#F2EBE3; --crema:#FAF6F0; --blanco:#FFFDF9; --tinta:#2E1A24; --suave:#6B5560; --linea:#E3D7CB;
-  --magenta:#E84890; --magenta-txt:#C42F7B; --magenta-osc:#A82A68; --ciruela:#5E1E43; --rosa:#F4BDD0; --oro:#C38A80; --ok:#3E7A55; --error:#B5302F;
+  --papel:#F2EBE3; --crema:#FAF6F0; --blanco:#FFFDF9; --tinta:#2E1A24; --suave:#6B5560; --linea:#EFC9DA; --borde:#A86F8B;
+  --magenta:#E84890; --magenta-txt:#B82A72; --magenta-osc:#A82A68; --ciruela:#5E1E43; --rosa:#F4BDD0; --oro:#C38A80; --ok:#3E7A55; --error:#B5302F;
   --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
   --texto:"Jost","Futura","Century Gothic",system-ui,sans-serif;
   --r:4px; color-scheme:light;
@@ -32,9 +32,7 @@ h1,h2,h3{font-family:var(--display);font-style:italic;font-weight:500;color:var(
  linear-gradient(151deg,transparent 38%,rgba(225,170,240,.24) 45%,rgba(235,190,245,.48) 50%,rgba(215,150,230,.26) 55%,transparent 62%),
  linear-gradient(151deg,transparent 20%,rgba(240,160,220,.2) 29%,transparent 38%),
  radial-gradient(ellipse 45% 30% at 10% 85%,rgba(255,120,150,.4),transparent 70%),
- radial-gradient(ellipse 55% 45% at 0% 0%,rgba(185,40,125,.6),transparent 70%),
- radial-gradient(ellipse 60% 50% at 100% 100%,rgba(195,45,120,.5),transparent 70%),
- linear-gradient(160deg,#D83C8C 0%,#E84890 40%,#EA4E96 70%,#D84287 100%)}
+ linear-gradient(160deg,#EC5297 0%,#EE5A9C 45%,#F0609F 70%,#EC5297 100%)}
 .rosa-jole::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");mix-blend-mode:overlay;opacity:.55}
 .btn:not(.sec){position:relative;isolation:isolate;overflow:hidden;background:
  linear-gradient(151deg,transparent 40%,rgba(235,190,245,.16) 50%,transparent 60%),
@@ -45,9 +43,8 @@ h1,h2,h3{font-family:var(--display);font-style:italic;font-weight:500;color:var(
 .btn.sec:hover{background:var(--ciruela);color:var(--crema)}
 .btn.ancho-completo{width:100%}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-.demo-banda{position:relative;background:var(--ciruela);color:var(--crema);font-size:12px;letter-spacing:.08em;text-align:center;padding-block:19px 7px}
+.demo-banda{position:relative;height:12px}
 .demo-banda::before{top:0}
-.demo-banda b{color:var(--rosa);font-weight:500}
 
 /* encabezado */
 header.sitio{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--papel) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
@@ -239,11 +236,11 @@ table.medidas th,table.medidas td{border-bottom:1px solid var(--linea);padding:8
 .campo.completo{grid-column:1/-1}
 .campo label{font-size:14px;font-weight:500}
 .campo label small{font-weight:400;color:var(--suave)}
-.campo input,.campo select,.campo textarea{font:inherit;font-size:16px;padding:12px 13px;border:1px solid #CDBFB2;border-radius:var(--r);background:var(--blanco);color:var(--tinta);min-height:48px;width:100%}
+.campo input,.campo select,.campo textarea{font:inherit;font-size:16px;padding:12px 13px;border:1px solid var(--borde);border-radius:var(--r);background:var(--blanco);color:var(--tinta);min-height:48px;width:100%}
 .campo input[aria-invalid="true"]{border-color:var(--error)}
 @media (max-width:560px){.campos{grid-template-columns:1fr}}
 .opciones{display:grid;gap:10px}
-.opcion{display:flex;gap:12px;align-items:flex-start;border:1px solid #CDBFB2;border-radius:var(--r);padding:14px;background:var(--blanco);cursor:pointer}
+.opcion{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--borde);border-radius:var(--r);padding:14px;background:var(--blanco);cursor:pointer}
 .opcion:has(input:checked){border-color:var(--ciruela);box-shadow:inset 0 0 0 1px var(--ciruela)}
 .opcion input{width:20px;height:20px;accent-color:var(--magenta);margin-top:2px}
 .opcion .t{flex:1}
@@ -265,19 +262,19 @@ table.medidas th,table.medidas td{border-bottom:1px solid var(--linea);padding:8
 .confirmacion h1{font-size:clamp(40px,5vw,60px);margin:14px 0}
 .confirmacion .sello-c{width:120px;margin:auto;transform:rotate(-5deg)}
 
-footer.pie{--rosa:#3D0F28;--crema:#2E1A24;color:var(--tinta);padding-block:48px 28px;position:relative}
+footer.pie{--rosa:#1F0A15;--crema:#1F0A15;color:#1F0A15;padding-block:48px 28px;position:relative}
 footer.pie::before{content:"";position:absolute;inset:0 0 auto;height:12px;background:url("img/13-tira-tejido.svg") left center/auto 100% repeat-x}
 footer.pie .cols{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px}
 footer.pie h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rosa);margin:0 0 10px;font-weight:500}
-footer.pie a{display:block;color:var(--crema);text-decoration:none;font-size:14px;padding:3px 0;opacity:.88}
-footer.pie p{font-size:14px;opacity:.85;max-width:40ch}
+footer.pie a{display:block;color:var(--crema);text-decoration:none;font-size:14px;padding:3px 0}
+footer.pie p{font-size:14px;max-width:40ch}
 @media (max-width:820px){footer.pie .cols{grid-template-columns:1fr 1fr}}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--tinta);color:var(--crema);padding:12px 18px;border-radius:var(--r);font-size:14px;opacity:0;transition:.3s;z-index:90;pointer-events:none}
 .toast.ver{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 
-<div class="demo-banda gutter"><b>Tienda de demostración.</b> Productos, precios y regiones son ejemplos; no se procesa ningún pago.</div>
+<div class="demo-banda" aria-hidden="true"></div>
 
 <header class="sitio gutter">
   <div class="barra ancho">
@@ -417,7 +414,7 @@ footer.pie p{font-size:14px;opacity:.85;max-width:40ch}
       <div><h4>Ayuda</h4><a href="#tienda">Guía de tallas</a><a href="#tienda">Envíos y entregas</a><a href="#tienda">Cambios y devoluciones</a></div>
       <div><h4>Contacto</h4><p><span style="color:var(--rosa)">[WhatsApp]</span><br><span style="color:var(--rosa)">[correo]</span><br><span style="color:var(--rosa)">[@redes]</span></p></div>
     </div>
-    <div style="margin-top:32px;font-size:12px;display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap"><span style="opacity:.7">© Jolé · Prototipo de tienda · Todos los datos son de ejemplo</span><span class="firma">Desarrollado por <a href="https://tecnoia.gt/" target="_blank" rel="noopener" style="display:inline;padding:0;font-size:inherit;opacity:1"><b>Tecnoia.gt</b></a></span></div>
+    <div style="margin-top:32px;font-size:12px;display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap"><span>© Jolé · Prototipo de tienda · Todos los datos son de ejemplo</span><span class="firma">Desarrollado por <a href="https://tecnoia.gt/" target="_blank" rel="noopener" style="display:inline;padding:0;font-size:inherit;opacity:1"><b>Tecnoia.gt</b></a></span></div>
   </div>
 </footer>
 
